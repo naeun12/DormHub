@@ -6,7 +6,7 @@ import { createApp } from 'vue';
 import TenantRegister from './components/tenants/tenantRegister.vue';
 import LandlordRegister from './components/landlord/landlordregister.vue';
 import LandlordLogin from './components/landlord/landlordlogin.vue';
-import LandlordDormManagement from './components/landlord/auth/DormManagement.vue';
+import LandlordDormManagement from './components/landlord/auth/dormManagement.vue';
 import landlordDashboard from './components/landlord/auth/dashboard.vue';
 import landlordroomManagement from './components/landlord/auth/roomManagement.vue';
 import tenantpage from './components/landlord/auth/tenantpage.vue';
