@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use SendGrid\Mail\Mail as SGMail;
-use SendGrid;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\userEmail;
+
 
 class LandingPageController extends Controller
 {
