@@ -5,41 +5,56 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use SendGrid\Mail\Mail as SGMail;
-use SendGrid;
 
 class userEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $tenantEmail;
-    public $messageBody;
+    /**
+     * Create a new message instance.
+     */
+   use Queueable, SerializesModels;
 
-    public function __construct($tenantEmail, $messageBody)
+    /**
+     * Create a new message instance.
+     */
+    public $tenantName;
+    public $messageBody;
+   public function __construct($tenantName, $messageBody)
     {
-        $this->tenantEmail = $tenantEmail;
+        $this->tenantName = $tenantName;
         $this->messageBody = $messageBody;
     }
 
-    // Build method: SendGrid API call
-    public function build()
+    /**
+     * Get the message envelope.
+     */
+    public function envelope(): Envelope
     {
-        $email = new SGMail();
-        $email->setFrom("niiinaeun@gmail.com", "DormHub");
-        $email->setSubject("DormHub Reminder");
-        $email->addTo($this->tenantEmail);
-        $email->addContent("text/plain", $this->messageBody);
+        return new Envelope(
+            subject: 'DormHub Reminder'
+        );
+    }
+    /**
+     * Get the message content definition.
+     */
+    public function content(): Content
+    {
+        return new Content(
+            view: 'admin.auth.email.tenantemail',
+        );
+    }
 
-        $sendgrid = new SendGrid(env('SENDGRID_API_KEY'));
-
-        try {
-            $response = $sendgrid->send($email);
-            \Log::info("SendGrid Status: " . $response->statusCode());
-        } catch (\Exception $e) {
-            \Log::error("SendGrid API Error: " . $e->getMessage());
-        }
-
-        return $this;
+    /**
+     * Get the attachments for the message.
+     *
+     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     */
+    public function attachments(): array
+    {
+        return [];
     }
 }
