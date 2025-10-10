@@ -7,7 +7,7 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <link rel="icon" href="{{ asset('images/Logo/logo.png') }}" type="image/png">
+<link rel="icon" href="{{ asset('images/Logo/logo.png') }}" type="image/png">
 
     <link rel="stylesheet" href="{{ asset('css/landingpage/landingpage.css') }}">
     <link rel="stylesheet" href="{{ asset('css/navigationstyle/landingandacccountprocessnavigation.css') }}">
