@@ -1,8 +1,6 @@
+/* Bootstrap 5 */
 @import 'bootstrap/dist/css/bootstrap.min.css';
-@import '../css/app.css';
-@import 'bootstrap';
-/* resources/css/app.css */
 
-/* Your custom styles */
+/* Custom styles */
 @import "./landingpage/landingpage.css";
 @import "./navigationstyle/landingandacccountprocessnavigation.css";
