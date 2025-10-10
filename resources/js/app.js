@@ -49,6 +49,7 @@ AOS.init();
 
 
 
+
 const tenantContainer = document.querySelector('#TenantRegisterContainer');
 if (tenantContainer) {
     createApp(TenantRegister).mount('#TenantRegisterContainer');
