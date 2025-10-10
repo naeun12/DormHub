@@ -7,13 +7,14 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 window.axios.defaults.withCredentials = true; // ✅ Dapat ibutang before Echo init
 window.Pusher = Pusher;
 window.Echo = new Echo({
-      broadcaster: 'pusher',
-    key: import.meta.env.VITE_PUSHER_APP_KEY,
-    cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
+    broadcaster: 'pusher',
+    key: '22553162724d965c544b', // hardcoded
+    cluster: 'us2',
     forceTLS: true
-
 });
-
+console.log(import.meta.env.VITE_PUSHER_APP_KEY);
+console.log(import.meta.env.VITE_PUSHER_APP_CLUSTER);
+console.log(import.meta.env.VITE_PUSHER_APP_SECRET);
 
 
 /**

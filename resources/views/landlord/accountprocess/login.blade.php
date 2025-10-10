@@ -6,7 +6,9 @@
         <landlord-login></landlord-login>
     </div>
 </main>
-
+<script>
+    
+</script>
 
 
 
