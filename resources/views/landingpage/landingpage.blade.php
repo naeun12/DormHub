@@ -419,7 +419,7 @@
             </div>
 
             <!-- Contact Form -->
-           <form action="{{ route('send.email') }}" method="GET" class="row justify-content-center">
+           <form action="{{ route('send.email') }}" method="POST" class="row justify-content-center">
     @csrf
     <div class="col-md-8">
         <div class="row g-3">
