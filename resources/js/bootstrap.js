@@ -7,11 +7,10 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 window.axios.defaults.withCredentials = true; // ✅ Dapat ibutang before Echo init
 window.Pusher = Pusher;
 window.Echo = new Echo({
-    broadcaster: 'pusher',
-    key: '22553162724d965c544b',
-    cluster: 'us2', // or your actual cluster
-    forceTLS: true,
-    encrypted: true,
+      broadcaster: 'pusher',
+    key: import.meta.env.VITE_PUSHER_APP_KEY,
+    cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
+    forceTLS: true
 
 });
 
