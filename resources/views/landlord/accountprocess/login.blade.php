@@ -1,7 +1,6 @@
 @include('landlord.partials.navigation')
 
 <main class="d-flex justify-content-center  align-items-center mb-5 py-5 mt-5">
-    <p>Login as Landlord</p>
     <div id="landlordContainerLogin">
         <landlord-login></landlord-login>
     </div>
