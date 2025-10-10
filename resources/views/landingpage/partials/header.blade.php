@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dormhub</title>
-    <!-- REMOVE asset('css/app.css') to avoid conflict -->
+        <!-- <link href="{{ asset('css/app.css') }}" rel="stylesheet"> -->
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="icon" href="{{ asset('images/Logo/logo.png') }}" class="rounded" type="image/png">
 
