@@ -8,6 +8,9 @@ export default defineConfig({
             input: ['resources/css/app.css', 'resources/js/app.js'],
             refresh: true,
         }),
-        vue(), // Move vue plugin here, not inside laravel plugin
+        vue(),
     ],
+    optimizeDeps: {
+        include: ['lodash'], // ensure lodash is bundled during build
+    },
 });
