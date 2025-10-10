@@ -35,7 +35,7 @@ class dormpageController extends Controller
             return redirect()->route('loginLandlord')->with('error', 'Unauthorized access.');
         }
     
-    $landlord = landlordModel::find($landlordId);
+        $landlord = landlordModel::find($landlordId);
         if (!$landlord) {
             return redirect()->route('loginLandlord')->with('error', 'Landlord not found.');
         }
