@@ -228,7 +228,7 @@ Route::middleware([TenantAuth::class])->group(function () {
     Route::get('/filter-gender/{dormitoryID}', [selectionRoomController::class, 'filterGender']);
     Route::post('/reserved-room', [selectionRoomController::class, 'reservation'])->name('reserved.room');
     Route::get('/view-room-details/{id}', [selectionRoomController::class, 'viewRoomDetails'])->name('view.room.details');
-    Route::get('/booking-process/{roomId}/{tenantID}', [bookroomController::class, 'bookRoomPage'])->name('room.selection');
+    Route::get('/booking-process/{roomId}/{tenantID}', [bookroomController::class, 'bookRoomPage']);
     Route::get('/get-room-details/{roomID}', [bookroomController::class, 'getRoom'])->name('get.room.details');
     Route::post('/book-room',[bookroomController::class,'bookingaRoom']);
 
