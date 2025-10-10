@@ -13,4 +13,5 @@ export default defineConfig({
     optimizeDeps: {
         include: ['lodash'], // ensure lodash is bundled during build
     },
+    base: 'https://capstonedormhubdeploy1-production.up.railway.app/', // base URL for production
 });
