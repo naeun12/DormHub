@@ -5,56 +5,41 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use SendGrid\Mail\Mail as SGMail;
+use SendGrid;
 
 class userEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    /**
-     * Create a new message instance.
-     */
-   use Queueable, SerializesModels;
-
-    /**
-     * Create a new message instance.
-     */
-    public $tenantName;
+    public $tenantEmail;
     public $messageBody;
-   public function __construct($tenantName, $messageBody)
+
+    public function __construct($tenantEmail, $messageBody)
     {
-        $this->tenantName = $tenantName;
+        $this->tenantEmail = $tenantEmail;
         $this->messageBody = $messageBody;
     }
 
-    /**
-     * Get the message envelope.
-     */
-    public function envelope(): Envelope
+    // Build method: SendGrid API call
+    public function build()
     {
-        return new Envelope(
-            subject: 'DormHub Reminder'
-        );
-    }
-    /**
-     * Get the message content definition.
-     */
-    public function content(): Content
-    {
-        return new Content(
-            view: 'admin.auth.email.tenantemail',
-        );
-    }
+        $email = new SGMail();
+        $email->setFrom("niiinaeun@gmail.com", "DormHub");
+        $email->setSubject("DormHub Reminder");
+        $email->addTo($this->tenantEmail);
+        $email->addContent("text/plain", $this->messageBody);
 
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
-    public function attachments(): array
-    {
-        return [];
+        $sendgrid = new SendGrid(env('SENDGRID_API_KEY'));
+
+        try {
+            $response = $sendgrid->send($email);
+            \Log::info("SendGrid Status: " . $response->statusCode());
+        } catch (\Exception $e) {
+            \Log::error("SendGrid API Error: " . $e->getMessage());
+        }
+
+        return $this;
     }
 }

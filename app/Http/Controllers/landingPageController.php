@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Mail\userEmail;
+
 use Illuminate\Support\Facades\Mail;
 
 class landingPageController extends Controller
