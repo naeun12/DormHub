@@ -7,7 +7,6 @@
     <title>{{ $title }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="{{ asset('css/landlordpage/register.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/navigationstyle/landingandacccountprocessnavigation.css') }}">
 
     <link rel="icon" href="{{ asset('images/Logo/logo.png') }}" class="rounded" type="image/png">
 
