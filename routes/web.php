@@ -52,7 +52,7 @@ use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 use Illuminate\Support\Facades\Auth;
 //view landingpage, login and register for landlord and tenant
 Route::get('/', [landingPageController::class, 'landingPage'])->name('landingpage');
-Route::post('/send-email', [landingPageController::class, 'sendEmail'])->name('send.email');
+Route::get('/send-email', [landingPageController::class, 'sendEmail'])->name('send.email');
 Route::get('/tenantLogin', [tenantController::class, 'login'])->name('login-tenant');
 Route::get('/tenantRegister', [tenantController::class, 'register'])->name('register-tenant');
 Route::get('/landlordLogin', [landlordaccountprocessController::class, 'landlordLogin'])->name('landlord-Login');

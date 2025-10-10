@@ -40,7 +40,7 @@ class dormpageController extends Controller
             return redirect()->route('loginLandlord')->with('error', 'Landlord not found.');
         }
     
-        return view('landlord.auth.dormManagement', [
+        return view('landlord.auth.DormManagement', [
             'title' => 'Landlord - Dorm Management',
             'headerName' => 'Dorm Management',
             'color' => 'primary',
