@@ -85,7 +85,7 @@ Route::post('/RegisterLandlord', [landlordaccountprocessController::class, 'Regi
 
 Route::middleware([LandlordAuth::class])->group(function () {
     Route::match(['get', 'post'], '/landlordDashboard/{landlordId}', [dashboardController::class, 'landlordDashboard'])->name('landlord.dashboard');
-    Route::match(['get', 'post'], '/landlordDormManagement/{landlord_id}', [dormpageController::class, 'DormManagement'])->name('landlord.dormanagement');
+    Route::match(['get', 'post'], '/landlordDormManagement/{landlordId}', [dormpageController::class, 'DormManagement'])->name('landlord.dormanagement');
     Route::match(['get', 'post'], '/input-text', [dormpageController::class, 'inputFieldDorm'])->name('input-text');
     Route::match(['get', 'post'], '/upload-main-image', [dormpageController::class, 'uploadmainImage'])->name('upload-main-image');
     Route::match(['get', 'post'], '/upload-secondary-image', [dormpageController::class, 'uploadsecondaryImage'])->name('upload-secondary-image');
@@ -93,7 +93,7 @@ Route::middleware([LandlordAuth::class])->group(function () {
     Route::match(['get', 'post'], '/edit-main-image', [dormpageController::class, 'editmainImage'])->name('edit-main-image');
     Route::match(['get', 'post'], '/edit-secondary-image', [dormpageController::class, 'editsecondaryImage'])->name('edit-secondary-image');
     Route::match(['get', 'post'], '/edit-images/{id}', [dormpageController::class, 'imageUpdated'])->name('edit-images');
-    Route::match(['get', 'post'], '/landlordRoomManagement/{landlord_id}', [roompageController::class, 'RoomManagement'])->name('landlordRoomManagement');
+    Route::match(['get', 'post'], '/landlordRoomManagement/{landlordId}', [roompageController::class, 'RoomManagement'])->name('landlordRoomManagement');
     Route::match(['get', 'post'], '/booking-index/{landlord_id}', [bookingpageController::class, 'bookingpageIndex'])->name('booking.index');
     Route::match(['get', 'post'], '/reservation-index/{landlord_id}', [reservationController::class, 'reservationIndex'])->name('reservation.index');
     Route::match(['get', 'post'], '/all-tenants-index/{landlord_id}', [alltenantsController::class, 'alltenantIndex'])->name('all.tenants.index');
