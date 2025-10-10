@@ -15,7 +15,7 @@
         "@popperjs/core": "^2.11.8",
         "@vladmandic/human": "^3.3.5",
         "aos": "^2.3.4",
-        "bootstrap": "^5.3.3",
+        "bootstrap": "^5.3.8",
         "chart.js": "^4.4.9",
         "laravel-echo": "^2.1.7",
         "lodash": "^4.17.21",
