@@ -15,9 +15,9 @@
         </li>
 
         <li class="list-group-item">
-            <a href="{{ route('landlordDormManagement', ['landlord_id' => session('landlord_id')]) }}"
+            <a href="{{ route('landlord.dormanagement', ['landlord_id' => session('landlord_id')]) }}"
                 class="text-decoration-none d-flex align-items-center gap-2 px-2 py-1 rounded hover-effect
-                    {{ request()->routeIs('landlordDormManagement') ? 'active-item' : 'text-dark' }}">
+                    {{ request()->routeIs('landlord.dormanagement') ? 'active-item' : 'text-dark' }}">
                 <i class="bi bi-house-add fs-5 text-primary"></i>
                 <span class="fw-semibold">Add or Manage Dorm Listing</span>
             </a>

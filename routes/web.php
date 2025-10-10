@@ -85,7 +85,7 @@ Route::post('/RegisterLandlord', [landlordaccountprocessController::class, 'Regi
 
 Route::middleware([LandlordAuth::class])->group(function () {
     Route::match(['get', 'post'], '/landlordDashboard/{landlordId}', [dashboardController::class, 'landlordDashboard'])->name('landlord.dashboard');
-    Route::match(['get', 'post'], '/landlordDormManagement/{landlord_id}', [dormpageController::class, 'DormManagement'])->name('landlordDormManagement');
+    Route::match(['get', 'post'], '/landlordDormManagement/{landlord_id}', [dormpageController::class, 'DormManagement'])->name('landlord.dormanagement');
     Route::match(['get', 'post'], '/input-text', [dormpageController::class, 'inputFieldDorm'])->name('input-text');
     Route::match(['get', 'post'], '/upload-main-image', [dormpageController::class, 'uploadmainImage'])->name('upload-main-image');
     Route::match(['get', 'post'], '/upload-secondary-image', [dormpageController::class, 'uploadsecondaryImage'])->name('upload-secondary-image');
