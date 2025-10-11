@@ -12,7 +12,9 @@ use App\Models\landlord\dormModel;
 use App\Models\landlord\dormimagesModel;
 use App\Models\landlord\dormrulesModel;
 use App\Models\landlord\rulesModel;
-use App\Models\NotificationModel;
+use App\Models\notificationModel;
+use Illuminate\Support\Facades\Log;
+
 
 class dormpageController extends Controller
 {

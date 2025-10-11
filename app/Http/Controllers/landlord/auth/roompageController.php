@@ -11,7 +11,7 @@ use App\Models\landlord\roomModel;
 use App\Models\landlord\dormModel;
 use App\Models\landlord\roomfeaturesModel;
 use App\Models\landlord\featuresModel;
-use App\Models\NotificationModel;
+use App\Models\notificationModel;
 use Illuminate\Support\Facades\Auth;
 
 class roompageController extends Controller
@@ -29,7 +29,7 @@ class roompageController extends Controller
             return redirect()->route('loginLandlord')->with('error', 'Unauthorized access.');
         }
 
-        $landlord = landlordModel::where('landlord_id', $landlordId)->first();
+        $landlord = landlordModel::where('landlordID', $landlordId)->first();
         if (!$landlord) {
             return redirect()->route('loginLandlord')->with('error', 'Landlord not found.');
         }
