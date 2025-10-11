@@ -21,15 +21,6 @@ public function DormManagement($landlordId)
     try {
         $sessionLandlordId = session('landlord_id');
 
-        $notifications = notificationModel::where('receiverID', $sessionLandlordId)
-            ->orderBy('created_at', 'desc')
-            ->take(5)
-            ->get();
-
-        $unreadCount = notificationModel::where('receiverID', $landlordId)
-            ->where('isRead', false)
-            ->count();
-
         if (!$sessionLandlordId) {
             return redirect()->route('loginLandlord')->with('error', 'Please log in as a landlord.');
         }
@@ -39,10 +30,18 @@ public function DormManagement($landlordId)
         }
 
         $landlord = landlordModel::find($landlordId);
-
         if (!$landlord) {
             return redirect()->route('loginLandlord')->with('error', 'Landlord not found.');
         }
+
+        $notifications = notificationModel::where('receiverID', $sessionLandlordId)
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+
+        $unreadCount = notificationModel::where('receiverID', $landlordId)
+            ->where('isRead', false)
+            ->count();
 
         return view('landlord.auth.DormManagement', [
             'title' => 'Landlord - Dorm Management',
@@ -55,16 +54,13 @@ public function DormManagement($landlordId)
         ]);
 
     } catch (\Exception $e) {
-        // Log the error in laravel.log
-        \Log::error('DormManagement error: '.$e->getMessage().' on line '.$e->getLine());
-
-        // Temporary response to see error in browser
-        return response()->json([
-            'error' => $e->getMessage(),
-            'line' => $e->getLine()
-        ], 500);
+        // Log the full error to Laravel logs
+        \Log::error('DormManagement error: '.$e->getMessage().' in '.$e->getFile().' on line '.$e->getLine());
+        // Optional: return a simple message to user
+        return response()->json(['error' => 'Something went wrong. Check logs for details.'], 500);
     }
 }
+
 
     public function getlandlordVerifiedStatus()
     {

@@ -16,40 +16,52 @@ use Illuminate\Support\Facades\Auth;
 
 class roompageController extends Controller
 {
-    public function RoomManagement($landlordId)
-    {
+   public function RoomManagement($landlordId)
+{
+    try {
         $sessionLandlordId = session('landlord_id');
-         $notifications = notificationModel::where('receiverID', $sessionLandlordId)
-            ->orderBy('created_at', 'desc')
-            ->take(5)
-            ->get();
-            $unreadCount = notificationModel::where('receiverID', $landlordId)
-            ->where('isRead', false)
-            ->count();
+
         if (!$sessionLandlordId) {
             return redirect()->route('loginLandlord')->with('error', 'Please log in as a landlord.');
         }
-    
+
         if ($landlordId !== $sessionLandlordId) {
-            // Optional: you can log this attempt or show a 403 page
             return redirect()->route('loginLandlord')->with('error', 'Unauthorized access.');
         }
-    
-$landlord = landlordModel::where('landlord_id', $landlordId)->first();
+
+        $landlord = landlordModel::where('landlord_id', $landlordId)->first();
         if (!$landlord) {
             return redirect()->route('loginLandlord')->with('error', 'Landlord not found.');
         }
+
         $dorms = dormModel::where('fklandlordID', $landlordId)->get();
-        return view ('landlord.auth.roomManagement', ['title' => 'Landlord - Room Management',
-        'headerName' => 'Room Management',
-        'color' =>'primary',
-        'landlord' => $landlord,
-        'landlord_id' => $sessionLandlordId,
-        'dorms' => $dorms,
-        'notifications' => $notifications,
-        'unread_count' => $unreadCount
-    ]);
+
+        $notifications = notificationModel::where('receiverID', $sessionLandlordId)
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+
+        $unreadCount = notificationModel::where('receiverID', $landlordId)
+            ->where('isRead', false)
+            ->count();
+
+        return view('landlord.auth.roomManagement', [
+            'title' => 'Landlord - Room Management',
+            'headerName' => 'Room Management',
+            'color' =>'primary',
+            'landlord' => $landlord,
+            'landlord_id' => $sessionLandlordId,
+            'dorms' => $dorms,
+            'notifications' => $notifications,
+            'unread_count' => $unreadCount
+        ]);
+
+    } catch (\Exception $e) {
+        \Log::error('RoomManagement error: '.$e->getMessage().' in '.$e->getFile().' on line '.$e->getLine());
+        return response()->json(['error' => 'Something went wrong. Check logs for details.'], 500);
     }
+}
+
     public function getRoomsByDorm($dormId)
     {
         $landlordId = session('landlord_id');
