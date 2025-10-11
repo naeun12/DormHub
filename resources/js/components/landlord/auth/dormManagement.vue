@@ -2232,6 +2232,8 @@ export default {
         //updating dorm functions
         async editDorm(dormId) {
             try {
+                this.$refs.loader.loading = true;
+
                 const response = await axios.get(`/view-dorm/${dormId}`);
                 if (response.data.status === "success") {
                     this.editDormData = {
@@ -2256,6 +2258,9 @@ export default {
             } catch (error) {
                 console.error("Error fetching dorm details:", error);
                 alert("An error occurred while loading dorm details");
+            }
+            finally {
+                this.$refs.loader.loading = false;
             }
         },
         updateImages() {
