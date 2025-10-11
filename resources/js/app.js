@@ -8,7 +8,7 @@ import LandlordRegister from './components/landlord/landlordregister.vue';
 import LandlordLogin from './components/landlord/landlordlogin.vue';
 import LandlordDormManagement from './components/landlord/auth/dormManagement.vue';
 import landlordDashboard from './components/landlord/auth/dashboard.vue';
-import landlordroomManagement from './components/landlord/auth/roomManagement.vue';
+import LandlordRoomManagement from './components/landlord/auth/roomManagement.vue';
 import tenantpage from './components/landlord/auth/tenantpage.vue';
 import BookingManagement from './components/landlord/auth/bookingpage.vue';
 import MessagingCenter from './components/landlord/auth/messagingCenter.vue';
@@ -70,10 +70,10 @@ const landlorddormManagementContainer = document.querySelector('#landlorddormMan
 if (landlorddormManagementContainer) {
     createApp(LandlordDormManagement).mount('#landlorddormManagement');
 }
+
 const landlordroomManagementContainer = document.querySelector('#landlordroomManagement');
 if (landlordroomManagementContainer) {
-    createApp(landlordroomManagement).mount('#landlordroomManagement');
-
+    createApp(LandlordRoomManagement).mount('#landlordroomManagement');
 }
 const tenantpageContainer = document.querySelector('#tenantpage');
 if (tenantpageContainer) {

@@ -798,17 +798,9 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Modal Footer -->
-
             </div>
         </div>
     </div>
-
-
-    <!--Images Post Modal-->
-
-
     <Toastcomponents ref="toast" />
 
     <Modalconfirmation ref="modal" />

@@ -14,9 +14,7 @@
 
         </div>
 
-        <script>
-            window.landlordId = @json(session('landlordID'));
-        </script>
+      
 
 
         @include('landlord.auth.partials.footer')

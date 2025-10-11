@@ -45,7 +45,7 @@ class dormpageController extends Controller
             'headerName' => 'Dorm Management',
             'color' => 'primary',
             'landlord' => $landlord,
-            'landlord_id' => $landlordId,
+            'landlord_id' => $sessionLandlordId,
             'notifications' => $notifications,
             'unread_count' => $unreadCount
         ]);
