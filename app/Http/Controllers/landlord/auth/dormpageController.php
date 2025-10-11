@@ -16,30 +16,34 @@ use App\Models\NotificationModel;
 
 class dormpageController extends Controller
 {
-    public function DormManagement($landlordId)
-    {
+public function DormManagement($landlordId)
+{
+    try {
         $sessionLandlordId = session('landlord_id');
-         $notifications = notificationModel::where('receiverID', $sessionLandlordId)
+
+        $notifications = notificationModel::where('receiverID', $sessionLandlordId)
             ->orderBy('created_at', 'desc')
             ->take(5)
             ->get();
-             $unreadCount = notificationModel::where('receiverID', $landlordId)
+
+        $unreadCount = notificationModel::where('receiverID', $landlordId)
             ->where('isRead', false)
             ->count();
+
         if (!$sessionLandlordId) {
             return redirect()->route('loginLandlord')->with('error', 'Please log in as a landlord.');
         }
-    
+
         if ($landlordId !== $sessionLandlordId) {
-            // Optional: you can log this attempt or show a 403 page
             return redirect()->route('loginLandlord')->with('error', 'Unauthorized access.');
         }
-    
+
         $landlord = landlordModel::find($landlordId);
+
         if (!$landlord) {
             return redirect()->route('loginLandlord')->with('error', 'Landlord not found.');
         }
-    
+
         return view('landlord.auth.DormManagement', [
             'title' => 'Landlord - Dorm Management',
             'headerName' => 'Dorm Management',
@@ -49,7 +53,19 @@ class dormpageController extends Controller
             'notifications' => $notifications,
             'unread_count' => $unreadCount
         ]);
+
+    } catch (\Exception $e) {
+        // Log the error in laravel.log
+        \Log::error('DormManagement error: '.$e->getMessage().' on line '.$e->getLine());
+
+        // Temporary response to see error in browser
+        return response()->json([
+            'error' => $e->getMessage(),
+            'line' => $e->getLine()
+        ], 500);
     }
+}
+
     public function getlandlordVerifiedStatus()
     {
         $landlordId = session('landlord_id');
