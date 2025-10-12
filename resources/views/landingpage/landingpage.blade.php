@@ -38,13 +38,14 @@
                 <p class="mb-2" style="font-size: clamp(0.8rem, 2vw, 1rem);">Sign up as:</p>
 
                 <div class="d-flex gap-3 flex-column flex-sm-row">
-                    <a href="{{ route('landlord-Login') }}" class="btn-custom w-100 w-sm-auto">
-                        Landlord
-                    </a>
-                    <a href="{{ route('login-tenant') }}" class="btn-custom-tenant w-100 w-sm-auto">
-                        Tenant
-                    </a>
-                </div>
+                        <a href="{{ route('landlord-Login') }}"
+                            class="btn  text-white rounded-pill px-4 fw-semibold shadow">
+                            Landlord
+                        </a>
+                        <a href="{{ route('login-tenant') }}" class="btn  rounded-pill px-4 fw-semibold">
+                            Tenant
+                        </a>
+                    </div>
             </div>
         </div>
 
