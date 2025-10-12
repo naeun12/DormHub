@@ -17,7 +17,7 @@
             </div>
 
             <!-- Content Overlay -->
-            <div class="position-relative z-2 d-flex align-items-center justify-content-center px-3 px-md-5"
+        <div class="position-relative z-2 d-flex align-items-center justify-content-center px-3 px-md-5"
             style="min-height: 60vh;">
             <div class="bg-white bg-opacity-10 text-white p-5 rounded-4 shadow-lg backdrop-blur"
                 style="max-width: 700px; width: 100%; border: 1px solid rgba(255,255,255,0.15);">
