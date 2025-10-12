@@ -6,7 +6,7 @@ use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\landlord\landlordModel;
-use App\Models\Landlord\dormaminitiesModel; 
+use App\Models\landlord\dormaminitiesModel; 
 use App\Models\landlord\aminitiesModel; 
 use App\Models\landlord\dormModel; 
 use App\Models\landlord\dormimagesModel;
