@@ -4,11 +4,15 @@
             <i class="fas fa-bars"></i>
         </button>
 
+
         <h4 class="text-black fs-5">{{ $headerName }}</h4>
+
 
         <div class="user-profile text-black d-flex align-items-center gap-3">
 
+
             <!-- Notification Bell with Dropdown -->
+
 
             <div class="dropdown">
                 <button class="btn position-relative p-0 border-0 bg-transparent" type="button"
@@ -28,11 +32,15 @@
                     @endif
 
 
+
+
                 </button>
+
 
                 <ul class="dropdown-menu dropdown-menu-end shadow-lg mt-2" aria-labelledby="notificationDropdown"
                     style="min-width: 300px;">
                     <li class="dropdown-header fw-bold text-center text-primary">Notifications</li>
+
 
                     @forelse($notifications as $notif)
                         <li>
@@ -54,6 +62,7 @@
                         </li>
                     @endforelse
 
+
                     <li>
                         <hr class="dropdown-divider">
                     </li>
@@ -67,24 +76,27 @@
 
 
 
+
+
+
             <!-- User profile dropdown -->
            <div class="dropdown">
-    <a class="d-flex align-items-center text-black text-decoration-none dropdown-toggle" 
-       href="#" 
-       role="button" 
-       id="userDropdown" 
-       data-bs-toggle="dropdown" 
+    <a class="d-flex align-items-center text-black text-decoration-none dropdown-toggle"
+       href="#"
+       role="button"
+       id="userDropdown"
+       data-bs-toggle="dropdown"
        aria-expanded="false">
-        <img src="{{ asset(session('landlord_avatar')) }}" 
-             alt="User Avatar" 
-             width="45" 
+        <img src="{{ asset(session('landlord_avatar')) }}"
+             alt="User Avatar"
+             width="45"
              height="45"
              class="rounded-circle me-2">
 
-        <span class="username fw-semibold">
-            {{ session('landlord_firstname') }} {{ session('landlord_lastname') }}
-        </span>
+
+       
     </a>
+
 
     <ul class="dropdown-menu dropdown-menu-end mt-2 shadow" aria-labelledby="userDropdown">
         <li>
@@ -101,6 +113,7 @@
         </li>
     </ul>
 </div>
+
 
         </div>
         <!--End Modal-->

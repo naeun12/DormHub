@@ -1,63 +1,72 @@
 <template>
     <Loader ref="loader" />
     <Toastcomponents ref="toast" />
-    <div class="card border-0 shadow-lg mt-5 py-4 px-3 mx-auto"
-        style="width: 700px; border-radius: 25px; background: #ffffff;">
-        <div class="card-body">
-            <h1 class="text-center mb-2 mt-3 fw-bold text-primary">👋 Hello Admin</h1>
-            <p class="text-center mb-4 text-muted fs-6">
-                Welcome back, Admin! Please log in to continue managing your properties. </p>
-        </div>
 
-        <!-- Login Form -->
-        <form @submit.prevent="adminLogin">
-            <div class="row px-4">
-                <!-- Email -->
-                <div class="mt-3">
-                    <label for="username" class="form-label fw-semibold">Username</label>
-                    <input type="username" name="username" id="username" class="form-control p-3" v-model="username"
-                        placeholder="Enter your username" style="border: 2px solid #4edce2; border-radius: 12px;">
-                    <span v-if="errors.username" class="text-danger small">
-                        {{ errors.username[0] }}
-                    </span>
-                </div>
 
-                <!-- Password -->
-                <div class="mt-3">
-                    <label for="password" class="form-label fw-semibold">Password</label>
-                    <div class="input-group">
-                        <input type="password" id="password" name="password" v-model="password" class="form-control p-3"
-                            placeholder="Enter your password" style="border: 2px solid #4edce2; border-radius: 12px;">
-                    </div>
-                    <span v-if="errors.password" class="text-danger small">
-                        {{ errors.password[0] }}
-                    </span>
-                </div>
-
-                <!-- Show Password -->
-                <div class="mt-3 d-flex align-items-center">
-                    <input type="checkbox" id="show-password" name="show-password" class="form-check-input me-2"
-                        style="border: 2px solid #4edce2;" @click="toggleShowPassword">
-                    <label for="show-password" class="form-label m-0">Show Password</label>
-                </div>
-
-                <!-- Sign In Button -->
-                <div class="container d-flex justify-content-center">
-                    <div class="w-75 mt-4">
-                        <button type="submit" class="btn btn-primary rounded-pill w-100 py-2 shadow-sm"
-                            style="background: linear-gradient(135deg, #4edce2, #1fb6ff); border: none; font-weight: 600; transition: all 0.3s;">
-                            Sign In
-                        </button>
-                    </div>
-                </div>
+    <div class="container py-5">
+        <div class="card border-0 shadow-lg py-4 px-3 mx-auto"
+            style="max-width: 700px; border-radius: 25px; background: #ffffff;">
+            <div class="card-body">
+                <h1 class="text-center mb-2 mt-3 fw-bold text-primary">👋 Hello Admin</h1>
+                <p class="text-center mb-4 text-muted fs-6">
+                    Welcome back, Admin! Please log in to continue managing your properties.
+                </p>
             </div>
-        </form>
 
-        <!-- Signup Link -->
-       
+
+            <!-- Login Form -->
+            <form @submit.prevent="adminLogin">
+                <div class="row px-3 px-sm-4">
+
+
+                    <!-- Username -->
+                    <div class="mt-3">
+                        <label for="username" class="form-label fw-semibold">Username</label>
+                        <input type="text" id="username" name="username" v-model="username" class="form-control p-3"
+                            placeholder="Enter your username" style="border: 2px solid #4edce2; border-radius: 12px;">
+                        <span v-if="errors.username" class="text-danger small">
+                            {{ errors.username[0] }}
+                        </span>
+                    </div>
+
+
+                    <!-- Password -->
+                    <div class="mt-3">
+                        <label for="password" class="form-label fw-semibold">Password</label>
+                        <div class="input-group">
+                            <input type="password" id="password" name="password" v-model="password"
+                                class="form-control p-3" placeholder="Enter your password"
+                                style="border: 2px solid #4edce2; border-radius: 12px;">
+                        </div>
+                        <span v-if="errors.password" class="text-danger small">
+                            {{ errors.password[0] }}
+                        </span>
+                    </div>
+
+
+                    <!-- Show Password -->
+                    <div class="mt-3 d-flex align-items-center">
+                        <input type="checkbox" id="show-password" class="form-check-input me-2"
+                            style="border: 2px solid #4edce2;" @click="toggleShowPassword">
+                        <label for="show-password" class="form-label m-0">Show Password</label>
+                    </div>
+
+
+                    <!-- Sign In Button -->
+                    <div class="d-flex justify-content-center">
+                        <div class="w-100 w-sm-75 mt-4">
+                            <button type="submit" class="btn btn-primary rounded-pill w-100 py-2 shadow-sm"
+                                style="background: linear-gradient(135deg, #4edce2, #1fb6ff); border: none; font-weight: 600; transition: all 0.3s;">
+                                Sign In
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+
+        </div>
     </div>
-
-
 </template>
 <script>
 import axios from 'axios';

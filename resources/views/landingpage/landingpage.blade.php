@@ -17,33 +17,37 @@
             </div>
 
             <!-- Content Overlay -->
-            <div class="position-relative z-2 h-75 d-flex align-items-center justify-content-center px-3 px-md-5">
-                <div class="bg-white bg-opacity-10 text-white p-5 rounded-4 shadow-lg backdrop-blur"
-                    style="max-width: 700px; width: 100%; border: 1px solid rgba(255,255,255,0.15);">
+            <div class="position-relative z-2 d-flex align-items-center justify-content-center px-3 px-md-5"
+            style="min-height: 60vh;">
+            <div class="bg-white bg-opacity-10 text-white p-5 rounded-4 shadow-lg backdrop-blur"
+                style="max-width: 700px; width: 100%; border: 1px solid rgba(255,255,255,0.15);">
 
-                    <h1 class="fw-bold mb-3 text-white" style="font-size: 2.8rem;">
-                        Welcome to <span style="color: #4edce2;">DormHub</span>
-                    </h1>
-                    <p class="lead" style="color: rgba(255, 255, 255, 0.85);">
-                        Your Ultimate Solution for Dormitory House Management in Lapu-Lapu and Mandaue City
-                    </p>
-                    <p class="mb-4" style="color: rgba(255, 255, 255, 0.75);">
-                        DormHub connects students, professionals, and travelers to top-notch dorms while making
-                        management easier for landlords and tenants.
-                    </p>
+                <h1 class="fw-bold mb-3 text-white" style="font-size: clamp(1.8rem, 6vw, 2.8rem);">
+                    Welcome to <span style="color: #4edce2;">DormHub</span>
+                </h1>
 
-                    <p class="mb-2">Sign up as:</p>
-                    <div class="d-flex gap-3 flex-column flex-sm-row">
-                        <a href="{{ route('landlord-Login') }}"
-                            class="btn  text-white rounded-pill px-4 fw-semibold shadow">
-                            Landlord
-                        </a>
-                        <a href="{{ route('login-tenant') }}" class="btn  rounded-pill px-4 fw-semibold">
-                            Tenant
-                        </a>
-                    </div>
+                <p class="lead" style="color: rgba(255, 255, 255, 0.85); font-size: clamp(0.9rem, 2.5vw, 1.2rem);">
+                    Your Ultimate Solution for Dormitory House Management in Lapu-Lapu and Mandaue City
+                </p>
+
+                <p class="mb-4" style="color: rgba(255, 255, 255, 0.75); font-size: clamp(0.8rem, 2vw, 1rem);">
+                    DormHub connects students, professionals, and travelers to top-notch dorms while making
+                    management easier for landlords and tenants.
+                </p>
+
+                <p class="mb-2" style="font-size: clamp(0.8rem, 2vw, 1rem);">Sign up as:</p>
+
+                <div class="d-flex gap-3 flex-column flex-sm-row">
+                    <a href="{{ route('landlord-Login') }}" class="btn-custom w-100 w-sm-auto">
+                        Landlord
+                    </a>
+                    <a href="{{ route('login-tenant') }}" class="btn-custom-tenant w-100 w-sm-auto">
+                        Tenant
+                    </a>
                 </div>
             </div>
+        </div>
+
         </div>
         <!-- Cards Section (Overlap sa Background Image) -->
         <div class="container position-relative" style="margin-top: -120px; z-index: 5;">

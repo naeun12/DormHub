@@ -1,47 +1,45 @@
 <template>
-
-
     <div class="main-content w-100">
 
-        <div class="dashboard-content px-4 py-3">
+
+        <div class="dashboard-content px-2 px-md-4 py-3">
             <NotificationList ref="toastRef" />
             <Loader ref="loader" />
-            <div class="py-3 px-4 mb-3 bg-light border-start border-primary border-4 rounded shadow-sm">
-                <h3 class="mb-1 text-primary">
+
+
+            <!-- Header Card -->
+            <div class="py-3 px-3 px-md-4 mb-3 bg-light border-start border-primary border-4 rounded shadow-sm">
+                <h3 class="mb-2 text-primary">
                     <i class="bi bi-person-circle me-2"></i>
                     {{ landlord.firstname }} {{ landlord.lastname }}
                 </h3>
 
 
-                <!-- Today's Date and Generate Reports in one row -->
-                <div class="d-flex align-items-center mb-3">
-                    <!-- Left side: Date -->
-                    <div class="d-flex align-items-center gap-2">
-                        <label class=" form-label fw-bold m-0">📅 Today's Date:</label>
-                        <input type="date" class="form-control w-auto" style="border: 1px solid #4edce2; min-width: 200px;"
-                            v-model="newDate" :max="today">
+                <!-- Date & Reports -->
+                <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center mb-3 gap-2">
+                    <!-- Date -->
+                    <div class="d-flex align-items-center gap-2 w-100 w-md-auto">
+                        <label class="form-label fw-bold m-0">📅 Today's Date:</label>
+                        <input type="date" class="form-control w-100 w-md-auto"
+                            style="border: 1px solid #4edce2; min-width: 180px;" v-model="newDate" :max="today">
                     </div>
 
-                    <!-- Right side: Generate Reports -->
-                    <!-- Right side: Generate Reports -->
-                    <div class="ms-auto d-flex align-items-center gap-2">
-                       
-                        <!-- Button with icon -->
+
+                    <!-- Download Report -->
+                    <div class="ms-md-auto mt-2 mt-md-0">
                         <a :href="`/generate-full-report/${landlord_id}?date=${newDate}`" target="_blank"
                             class="btn btn-outline-success btn-lg" :class="{ 'disabled': !newDate }">
                             📄 Download Full Report
                         </a>
-
                     </div>
-
                 </div>
             </div>
 
 
-
+            <!-- Info Cards -->
             <div class="row">
                 <!-- Total Tenants -->
-                <div class="col-md-6 mb-3">
+                <div class="col-12 col-md-6 mb-3">
                     <a :href="`/all-tenants-index/${landlord_id}`" class="text-decoration-none">
                         <div class="card shadow-sm border-start border-primary border-4 h-100">
                             <div class="card-body d-flex align-items-center justify-content-between">
@@ -49,18 +47,15 @@
                                     <h5 class="card-title mb-1 text-primary">Total Tenants</h5>
                                     <p class="card-text display-6 fw-bold mb-0 text-primary">{{ totalTenants }}</p>
                                 </div>
-                                <div class="ms-3">
-                                    <i class="bi bi-people-fill fs-1 text-primary"></i>
-                                </div>
+                                <i class="bi bi-people-fill fs-1 text-primary"></i>
                             </div>
                         </div>
                     </a>
                 </div>
 
 
-
-                <!-- Vacant Rooms -->
-                <div class="col-md-6 mb-3">
+                <!-- Vacant Beds -->
+                <div class="col-12 col-md-6 mb-3">
                     <a :href="`/landlordRoomManagement/${landlord_id}`" class="text-decoration-none">
                         <div class="card shadow-sm border-start border-success border-4 h-100">
                             <div class="card-body d-flex align-items-center justify-content-between">
@@ -68,77 +63,60 @@
                                     <h5 class="card-title mb-1 text-success">Vacant Beds</h5>
                                     <p class="card-text display-6 fw-bold mb-0 text-success">{{ availableBeds }}</p>
                                 </div>
-                                <div class="ms-3">
-                                    <i class="bi bi-door-open-fill fs-1 text-success"></i>
-                                </div>
+                                <i class="bi bi-door-open-fill fs-1 text-success"></i>
                             </div>
                         </div>
                     </a>
                 </div>
+            </div>
 
 
-                <div class="charts d-flex flex-wrap gap-3 justify-content-between mb-4">
-                    <!-- Left Chart -->
-                    <div class="chart-container p-3 border rounded shadow-sm"
-                        style="flex: 1 1 45%; max-width: 45%; min-width: 250px;">
-                        <h6 class="fw-bold mb-2">📈 Highest Dorm Profits</h6>
-                        <p class="fs-6 text-success mb-3">₱{{ totalDormProfit }}</p>
-                        <LineChart v-if="chartData" :chart-data="chartData" :chart-options="chartOptions" />
-                    </div>
-
-                    <!-- Right Chart -->
-                    <!-- Right Chart Container -->
-                    <!-- Right Chart Container -->
-                    <div class="chart-container p-3 border rounded shadow-sm"
-                        style="flex: 1 1 45%; max-width: 45%; min-width: 250px;">
-                        <h6 class="fw-bold mb-2">
-                            <i class="bi bi-cash-stack me-2"></i> Profits Per Dorm
-                        </h6>
-                        <DoughnutChart v-if="bookingChartData" :chart-data="bookingChartData"
-                            :chart-options="bookingChartOptions" />
-
-
-
-                        <!-- Legend -->
-                        <div class="legend mt-3"
-                            v-if="bookingChartData && bookingChartData.labels && bookingChartData.datasets && bookingChartData.datasets.length">
-                            <div class="legend-item d-flex justify-content-between align-items-center mb-1"
-                                v-for="(label, index) in bookingChartData.labels" :key="index">
-                                <span class="dot me-2" :style="{
-                                    width: '10px',
-                                    height: '10px',
-                                    backgroundColor: bookingChartData.datasets[0].backgroundColor[index],
-                                    borderRadius: '50%',
-                                    display: 'inline-block'
-                                }"></span>
-                                <span class="flex-grow-1 small">{{ label }}</span>
-                                <span class="small">
-                                    {{
-                                    calculatePercentage(
-                                    bookingChartData.datasets[0].data[index],
-                                    bookingChartData.datasets[0].data
-                                    )
-                                    }}%
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-
+            <!-- Charts -->
+            <div class="charts d-flex flex-wrap gap-3 justify-content-between mb-4 flex-md-1-1-45">
+                <div class="chart-container p-3 border rounded shadow-sm"
+                    style="flex: 1 1 100%; max-width: 100%; min-width: 250px;">
+                    <h6 class="fw-bold mb-2">📈 Highest Dorm Profits</h6>
+                    <p class="fs-6 text-success mb-3">₱{{ totalDormProfit }}</p>
+                    <LineChart v-if="chartData" :chart-data="chartData" :chart-options="chartOptions" />
                 </div>
 
-                <!-- Recent Bookings -->
-                <div class="col-md-6 mb-3">
+
+                <div class="chart-container p-3 border rounded shadow-sm flex-md-1-1-45"
+                    style="flex: 1 1 100%; max-width: 100%; min-width: 250px;">
+                    <h6 class="fw-bold mb-2"><i class="bi bi-cash-stack me-2"></i> Profits Per Dorm</h6>
+                    <DoughnutChart v-if="bookingChartData" :chart-data="bookingChartData"
+                        :chart-options="bookingChartOptions" />
+
+
+                    <!-- Legend -->
+                    <div class="legend mt-3" v-if="bookingChartData?.labels?.length">
+                        <div class="legend-item d-flex justify-content-between align-items-center mb-1"
+                            v-for="(label, index) in bookingChartData.labels" :key="index">
+                            <span class="dot me-2" :style="{
+                                width: '10px', height: '10px', backgroundColor: bookingChartData.datasets[0].backgroundColor[index], borderRadius: '50%'
+                            }"></span>
+                            <span class="flex-grow-1 small">{{ label }}</span>
+                            <span class="small">
+                                {{ calculatePercentage(bookingChartData.datasets[0].data[index],
+                                    bookingChartData.datasets[0].data) }}%
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Recent Bookings & Reservations -->
+            <div class="row">
+                <div class="col-12 col-md-6 mb-3">
                     <a :href="`/booking-index/${landlord_id}`" class="text-decoration-none">
                         <div class="card shadow-sm border-start border-info border-4 h-100">
                             <div class="card-header bg-transparent d-flex align-items-center justify-content-between">
-                                <h5 class="mb-0 text-info">
-                                    <i class="bi bi-calendar-check-fill me-2"></i>
-                                    Recent Bookings
+                                <h5 class="mb-0 text-info"><i class="bi bi-calendar-check-fill me-2"></i>Recent Bookings
                                 </h5>
                                 <span class="badge bg-info text-white">Updated</span>
                             </div>
-                            <div class="card-body">
+                            <div class="card-body table-responsive">
                                 <table class="table table-hover align-middle">
                                     <thead class="table-light">
                                         <tr>
@@ -151,11 +129,8 @@
                                         <tr v-for="booking in bookings.slice(0, 3)" :key="booking.bookingID">
                                             <td><strong>{{ booking.firstname }} {{ booking.lastname }}</strong></td>
                                             <td><span class="text-muted">{{ booking.moveInDate }}</span></td>
-                                            <td>
-                                                <span class="badge bg-primary px-3 py-2">
-                                                    Room {{ booking.room?.roomNumber ?? 'N/A' }}
-                                                </span>
-                                            </td>
+                                            <td><span class="badge bg-primary px-3 py-2">Room {{
+                                                booking.room?.roomNumber ?? 'N/A' }}</span></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -164,17 +139,15 @@
                     </a>
                 </div>
 
-                <div class="col-md-6 mb-3">
+
+                <div class="col-12 col-md-6 mb-3">
                     <a :href="`/reservation-index/${landlord_id}`" class="text-decoration-none">
                         <div class="card shadow-sm border-start border-warning border-4 h-100">
                             <div class="card-header bg-transparent d-flex align-items-center">
-                                <h5 class="mb-0 text-warning">
-                                    <i class="bi bi-person-plus-fill me-2"></i>
-                                    Recent Reservations
-                                </h5>
+                                <h5 class="mb-0 text-warning"><i class="bi bi-person-plus-fill me-2"></i>Recent
+                                    Reservations</h5>
                             </div>
-
-                            <div class="card-body">
+                            <div class="card-body table-responsive">
                                 <table class="table table-hover align-middle">
                                     <thead class="table-light">
                                         <tr>
@@ -185,32 +158,20 @@
                                     <tbody>
                                         <tr v-for="tenant in reservations.slice(0, 3)" :key="tenant.reservationID">
                                             <td><strong>{{ tenant.firstname }} {{ tenant.lastname }}</strong></td>
-                                            <td>
-                                                <span class="badge bg-primary px-3 py-2">
-                                                    Room {{ tenant.room?.roomNumber ?? 'N/A' }}
-                                                </span>
-                                            </td>
+                                            <td><span class="badge bg-primary px-3 py-2">Room {{ tenant.room?.roomNumber
+                                                ?? 'N/A' }}</span></td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
-
                     </a>
                 </div>
-
-
-
-
             </div>
 
+
         </div>
-
-
     </div>
-
-
-
 </template>
 <script>
 import axios from 'axios';

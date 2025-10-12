@@ -73,13 +73,13 @@
         <p class="text-muted">Check out the best dorms in your area</p>
     </div>
 
+
     <div class="m-2 py-4">
         <div class="row g-4">
             <!-- Large Left Card -->
-            <div class="col-md-6" v-if="topDorms.length > 0">
+            <div class="col-12 col-md-6" v-if="topDorms.length > 0">
                 <div class="card h-100 dorm-card text-white border-0 overflow-hidden shadow-lg"
                     style="border-radius: 20px; cursor: pointer; position: relative; height: 400px;">
-                    <!-- Full background image -->
                     <div :style="{
                         backgroundImage: `url(${topDorms[0].dorm.images?.mainImage || '/default-image.jpg'})`,
                         backgroundSize: 'cover',
@@ -89,8 +89,6 @@
                         borderRadius: '20px',
                         filter: 'brightness(0.7)'
                     }"></div>
-
-                    <!-- Text overlay -->
                     <div style="position: absolute; bottom: 20px; left: 20px; z-index: 10;">
                         <h4 class="fw-bold">{{ topDorms[0].dorm.dormName }}</h4>
                         <p class="mb-1">{{ topDorms[0].dorm.address }}</p>
@@ -101,8 +99,9 @@
                 </div>
             </div>
 
+
             <!-- Right Column -->
-            <div class="col-md-6">
+            <div class="col-12 col-md-6">
                 <!-- Second Card -->
                 <div class="card mb-4 dorm-card text-white border-0 overflow-hidden shadow" v-if="topDorms.length > 1"
                     style="border-radius: 20px; height: 190px; position: relative;">
@@ -119,15 +118,15 @@
                         <h5 class="fw-bold mb-1">{{ topDorms[1].dorm.dormName }}</h5>
                         <p class="mb-1">{{ topDorms[1].dorm.address }}</p>
                         <p class="mb-0">⭐ {{ Number(topDorms[1].avg_rating).toFixed(1) }}</p>
-                        <!-- FIXED: now correctly points to second dorm -->
                         <a @click="viewDorms(topDorms[1].dorm.dormID)"
                             class="btn btn-outline-light btn-sm mt-1">View</a>
                     </div>
                 </div>
 
+
                 <!-- Two Smaller Cards -->
                 <div class="row g-3">
-                    <div class="col-md-6" v-for="(dorm, index) in topDorms.slice(2, 4)" :key="dorm.fkdormID">
+                    <div class="col-12 col-md-6" v-for="(dorm, index) in topDorms.slice(2, 4)" :key="dorm.fkdormID">
                         <div class="card dorm-card text-white border-0 overflow-hidden shadow-sm"
                             style="border-radius: 15px; height: 140px; position: relative;">
                             <div :style="{
@@ -143,15 +142,14 @@
                                 <h6 class="fw-bold mb-0">{{ dorm.dorm.dormName }}</h6>
                                 <p class="mb-0 text-truncate">{{ dorm.dorm.address }}</p>
                                 <p class="mb-0">⭐ {{ Number(dorm.avg_rating).toFixed(1) }}</p>
-                                <!-- FIXED: correctly uses the loop dorm -->
                                 <a @click="viewDorms(dorm.dorm.dormID)"
                                     class="btn btn-outline-light btn-sm mt-1">View</a>
                             </div>
                         </div>
                     </div>
-                </div> <!-- End Smaller Cards -->
+                </div>
             </div>
-    </div>
+        </div>
     </div>
 </template>
 <script>

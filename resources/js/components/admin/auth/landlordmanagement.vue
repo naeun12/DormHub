@@ -1,18 +1,20 @@
 <template>
     <Loader ref="loader" />
 
-    <div class="d-flex justify-content-between align-items-center mb-3 p-3 bg-light shadow-sm rounded">
-        <h1 class="fw-bold text-dark mb-0" style="font-size: 1.8rem;">
+
+    <div
+        class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3 p-3 bg-light shadow-sm rounded">
+        <h1 class="fw-bold text-dark mb-3 mb-md-0" style="font-size: 1.8rem;">
             Landlord Management Dashboard
         </h1>
-        <button class="btn btn-primary d-inline-flex align-items-center px-4 py-2" @click="downloadReport"
-            style="transition: transform 0.2s, box-shadow 0.2s;"
-            onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)';"
-            onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';">
+        <button class="btn btn-primary d-inline-flex align-items-center px-4 py-2 btn-hover-effect"
+            @click="downloadReport">
             <i class="bi bi-file-earmark-arrow-down me-2"></i>
             Download Landlord Report
         </button>
     </div>
+
+
     <div class="input-group  w-100 shadow-sm rounded-pill overflow-hidden mb-3" style="border:2px solid #4edce2;">
         <span class="input-group-text bg-white border-0">
             <i class="bi bi-search text-primary"></i>
@@ -22,8 +24,7 @@
     </div>
 
 
-    <div class="table-responsive shadow-sm rounded border border-1" style="overflow: hidden;"
-        v-if="landlords && landlords.length">
+    <div class="table-responsive shadow-sm rounded border border-1" v-if="landlords && landlords.length">
         <table class="table table-striped table-hover align-middle mb-0">
             <thead class="table-info">
                 <tr>
@@ -46,45 +47,45 @@
                             {{ landlord.is_deactivated ? 'Deactivated' : 'Active' }}
                         </span>
                     </td>
-                    <td>
-                        <button class="btn btn-success btn-sm d-inline-flex align-items-center me-2"
-                            @click="viewTenantProfile(landlord.landlordID)" style="transition: transform 0.2s;"
-                            onmouseover="this.style.transform='scale(1.1)';"
-                            onmouseout="this.style.transform='scale(1)';">
-                            <i class="bi bi-eye me-1"></i> <!-- Eye icon for view -->
-                            View
+                    <td class="d-flex flex-wrap gap-2">
+                        <button class="btn btn-success btn-sm d-flex align-items-center"
+                            @click="viewTenantProfile(landlord.landlordID)">
+                            <i class="bi bi-eye me-1"></i> View
                         </button>
 
-                        <button class="btn btn-warning btn-sm d-inline-flex align-items-center"
-                            :disabled="landlord.is_deactivated" @click="deactivatedLandlord(landlord.landlordID)"
-                            style="transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)';"
-                            onmouseout="this.style.transform='scale(1)';">
-                            <i class="bi bi-slash-circle me-1"></i> <!-- Bootstrap icon for deactivate -->
-                            Deactivate
-                        </button>
 
+                        <button class="btn btn-warning btn-sm d-flex align-items-center"
+                            :disabled="landlord.is_deactivated" @click="deactivatedLandlord(landlord.landlordID)">
+                            <i class="bi bi-slash-circle me-1"></i> Deactivate
+                        </button>
                     </td>
                 </tr>
             </tbody>
         </table>
-        <nav aria-label="Page navigation" class="mt-3" v-if="landlords && landlords.length">
-            <ul class="pagination justify-content-center">
+
+
+        <nav aria-label="Page navigation" class="mt-3">
+            <ul class="pagination justify-content-center flex-wrap">
                 <li class="page-item" :class="{ disabled: currentPage === 1 }">
                     <button class="page-link" @click="fetchTenantsList(currentPage - 1)">Previous</button>
                 </li>
 
-                <!-- Numbered pages -->
+
                 <li class="page-item" v-for="page in lastPage" :key="page" :class="{ active: currentPage === page }">
                     <button class="page-link" @click="fetchTenantsList(page)">{{ page }}</button>
                 </li>
+
 
                 <li class="page-item" :class="{ disabled: currentPage === lastPage }">
                     <button class="page-link" @click="fetchTenantsList(currentPage + 1)">Next</button>
                 </li>
             </ul>
         </nav>
-
     </div>
+
+
+
+
 
 
     <div v-else class="alert alert-info text-center shadow-sm rounded d-flex align-items-center justify-content-center">
@@ -92,10 +93,12 @@
         No landlords found.
     </div>
 
+
     <div v-if="landlordviewModal" class="modal d-block fade show" tabindex="-1"
         style="background-color: rgba(0,0,0,0.5);">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+
 
                 <!-- Modal Header with gradient -->
                 <div class="modal-header p-3"
@@ -105,13 +108,16 @@
                         aria-label="Close"></button>
                 </div>
 
+
                 <div class="modal-body p-4 bg-light">
                     <div class="mb-3  text-center">
                         <img :src="selectedLandlord.previewPicUrl || (selectedLandlord.profilePicUrl ? '/' + selectedLandlord.profilePicUrl : '/default-avatar.png')"
                             class="rounded-circle border border-3 border-white shadow-sm"
                             style="width: 150px; height: 150px; object-fit: cover;">
 
+
                         <!-- Account Status Badge -->
+
 
                     </div>
                     <div class="mb-3  text-center">
@@ -120,9 +126,12 @@
                         </span>
                         <!-- Account Status Badge -->
 
+
                     </div>
 
+
                     <div v-if="selectedLandlord" class="d-flex  flex-md-row align-items-center ">
+
 
                         <!-- Profile Image -->
                         <!-- Tenant Info -->
@@ -137,6 +146,7 @@
                                         selectedLandlord.lastname }}</p>
                                 </div>
                             </div>
+
 
                             <div class="row mb-2">
                                 <div class="col-md-6">
@@ -153,13 +163,15 @@
                                     </p>
                                 </div>
 
+
                             </div>
+
 
                             <div class="row mb-2">
                                 <div class="col-md-6">
                                     <p class="mb-1"><strong class="text-primary">Email:</strong> {{
                                         selectedLandlord.email
-                                        }}</p>
+                                    }}</p>
                                 </div>
                                 <div class="col-md-6">
                                     <p class="mb-1"><strong class="text-primary">Phone:</strong> {{
@@ -168,13 +180,20 @@
                             </div>
 
 
+
+
                         </div>
+
 
                     </div>
 
 
 
+
+
+
                 </div>
+
 
                 <div class="modal-footer bg-light">
                     <button class="btn btn-success d-inline-flex align-items-center"
@@ -185,17 +204,21 @@
                         Re Active
                     </button>
 
+
                     <button type="button" class="btn btn-primary" @click="OpensendEmailModal(selectedLandlord)">
                         <i class="bi bi-envelope-fill me-1"></i> Send Email</button>
                 </div>
 
+
             </div>
         </div>
+
 
     </div>
     <div v-if="emailModal" class="modal d-block fade show" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+
 
                 <!-- Modal Header with gradient -->
                 <div class="modal-header p-3"
@@ -204,6 +227,7 @@
                     <button type="button" class="btn-close btn-close-white" @click="ClosesendEmailModal"
                         aria-label="Close"></button>
                 </div>
+
 
                 <!-- Modal Body -->
                 <div class="modal-body p-4 bg-light">
@@ -226,6 +250,7 @@
                     </form>
                 </div>
 
+
                 <!-- Modal Footer -->
                 <div class="modal-footer bg-light">
                     <button type="button" class="btn btn-primary" @click="sendEmail">
@@ -233,12 +258,16 @@
                     </button>
                 </div>
 
+
             </div>
         </div>
     </div>
 
+
     <Modalconfirmation ref="modal" />
     <Toastcomponents ref="toast" />
+
+
 
 
 </template>

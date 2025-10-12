@@ -1,36 +1,40 @@
 <template>
     <Loader ref="loader" />
     <NotificationList ref="toastRef" />
-    <div class="d-flex bg-light" style="min-height: 90vh;">
+    <div class="d-flex flex-column flex-md-row bg-light" style="min-height: 90vh;">
         <!-- Left Side: Benefits -->
-        <div class="p-4 text-white bg-info shadow-lg rounded-4" style="width: 320px;">
+        <div class="p-4 text-white bg-info shadow-lg rounded-4 m-3 m-md-4"
+            style="width: 100%; max-width: 320px; flex-shrink: 0;">
             <!-- Title -->
             <h4 class="mb-4 text-center fw-bold">
                 <i class="bi bi-star-fill me-2 text-warning"></i> Benefits
             </h4>
 
+
             <!-- Benefits List -->
             <ul class="list-unstyled">
                 <li class="mb-3 d-flex align-items-start">
-                    <i class="bi bi-house-door-fill me-2 text-warning fs-5"></i>
+                    <i class="bi bi-house-door-fill me-2 text-warning fs-5 mt-1"></i>
                     <span>Can upload your dorm listings</span>
                 </li>
                 <li class="mb-3 d-flex align-items-start">
-                    <i class="bi bi-people-fill me-2 text-warning fs-5"></i>
+                    <i class="bi bi-people-fill me-2 text-warning fs-5 mt-1"></i>
                     <span>Reach more tenants faster</span>
                 </li>
                 <li class="mb-3 d-flex align-items-start">
-                    <i class="bi bi-shield-check me-2 text-warning fs-5"></i>
+                    <i class="bi bi-shield-check me-2 text-warning fs-5 mt-1"></i>
                     <span>Verified landlord badge</span>
                 </li>
                 <li class="mb-3 d-flex align-items-start">
-                    <i class="bi bi-graph-up-arrow me-2 text-warning fs-5"></i>
+                    <i class="bi bi-graph-up-arrow me-2 text-warning fs-5 mt-1"></i>
                     <span>Better visibility on Dormhub search</span>
                 </li>
             </ul>
 
+
             <!-- Divider -->
             <hr class="border-light opacity-75" />
+
 
             <!-- Footer -->
             <div class="mt-3 text-center">
@@ -38,27 +42,31 @@
             </div>
         </div>
 
+
         <!-- Right Side: Payment Form -->
-        <div class="flex-fill d-flex align-items-center justify-content-center">
-            <div class="card shadow-lg border-0 rounded-4 p-4" style="width: 100%; max-width: 420px;">
+        <div class="flex-fill d-flex align-items-center justify-content-center p-3 p-md-4">
+            <div class="card shadow-lg border-0 rounded-4 p-4 w-100" style="max-width: 420px;">
                 <!-- Title -->
                 <h4 class="text-center fw-bold mb-4 text-primary">Upgrade Your Account</h4>
 
+
                 <!-- Payment Method -->
                 <div class="mb-4 d-flex justify-content-center">
-                    <div class="fw-bold border rounded-pill px-4 py-2 shadow-sm bg-light">
+                    <div class="fw-bold border rounded-pill px-3 px-md-4 py-2 shadow-sm bg-light">
                         Payment Method:
                         <span class="badge bg-primary ms-2 px-3 py-2">GCash</span>
                     </div>
                 </div>
+
 
                 <!-- Email -->
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Email Address</label>
                     <input type="email" class="form-control form-control-lg" placeholder="you@email.com"
                         v-model="email" />
-                        <p class="text-danger mt-1" v-if="error.email">{{ error.email[0] }}</p>
+                    <p class="text-danger mt-1" v-if="error.email">{{ error.email[0] }}</p>
                 </div>
+
 
                 <!-- Pay Button -->
                 <button class="btn btn-primary btn-lg w-100 py-2 shadow-sm" @click="payWithGCash" :disabled="loading">
@@ -71,7 +79,6 @@
     </div>
     <Toastcomponents ref="toast" />
 </template>
-
 <script>
 import axios from "axios";
 import Loader from '@/components/loader.vue';

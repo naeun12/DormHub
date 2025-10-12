@@ -1,6 +1,8 @@
 <template>
     <NotificationList ref="toastRef" />
-
+    <button class="btn btn-primary m-2" @click="goBack">
+        <i class="bi bi-arrow-left"></i> Back
+    </button>
     <div class="container my-5">
         <h3 class="fw-bold text-primary mb-4 d-flex align-items-center">
             <i class="bi bi-star-fill text-warning me-2"></i>
@@ -16,6 +18,7 @@
                     <i class="bi bi-star-fill" v-for="n in Math.round(averageRating)" :key="n"></i>
                 </div>
             </div>
+
 
             <!-- Star Distribution -->
             <div class="col-md-9 ps-4">
@@ -36,14 +39,15 @@
             </div>
         </div>
 
+
         <!-- Reviews List -->
         <h3 class="mb-4 fw-bold text-primary">Latest Reviews</h3>
         <div class="row g-4">
             <div v-for="review in reviews" :key="review.reviewID" class="col-md-6">
                 <div class="card shadow-sm h-100 border-0 rounded-4 review-card">
                     <div class="card-body d-flex gap-3 p-4">
-                        <img :src="review.tenant?.pictureID || 'https://via.placeholder.com/60'"
-                            alt="User Avatar" class="rounded-circle border border-2 border-warning"
+                        <img :src="review.tenant?.pictureID || 'https://via.placeholder.com/60'" alt="User Avatar"
+                            class="rounded-circle border border-2 border-warning"
                             style="width: 60px; height: 60px; object-fit: cover;" />
                         <div class="flex-grow-1">
                             <h5 class="card-title mb-1 fw-bold">
@@ -61,8 +65,10 @@
     </div>
 </template>
 
+
 <script>
 import axios from 'axios';
+
 
 export default {
     name: "ReviewsComponent",
@@ -90,8 +96,12 @@ export default {
             } catch (error) {
                 console.error("Error fetching reviews:", error);
             }
-        }
+        },
+        goBack() {
+            window.location.href = `/room-details/${this.dormitory_id}/${this.tenant_id}`;
+        },
     },
+
     mounted() {
         const element = document.getElementById('reviewandrating');
         if (element) {
@@ -103,10 +113,12 @@ export default {
 };
 </script>
 
+
 <style scoped>
 .review-card {
     transition: all 0.3s ease-in-out;
 }
+
 
 .review-card:hover {
     transform: translateY(-5px);

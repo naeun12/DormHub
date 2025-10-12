@@ -4,35 +4,39 @@
     <Modalconfirmation ref="modal" />
     <NotificationList ref="toastRef" />
 
+
     <div class="container-fluid py-3 m-0">
 
-        <div class="d-flex align-items-center justify-content-center gap-3 my-4">
+
+        <div
+            class="d-flex flex-column flex-sm-row align-items-stretch align-sm-items-center justify-content-center gap-2 gap-sm-3 my-4">
             <button :class="['btn', isAvailable, 'fw-bold']" @click="ClickavailableRooms()">
                 <i class="bi bi-door-open-fill me-2"></i>Available Rooms
             </button>
+
 
             <button :class="['btn', isOccupied, 'fw-bold']" @click="ClickoccupiedRooms()">
                 <i class="bi bi-door-open-fill me-2"></i>Occupied Rooms
             </button>
         </div>
-        <div class="d-flex justify-content-start my-3 p-2 gap-3">
-            <select class="form-select w-auto" id="roomFilter" style="border:1px solid #4edce2 "
-                v-model="selectPriceRange" @change="filterByPriceRange($event)">
+        <div class="d-flex flex-column flex-sm-row align-items-stretch align-sm-items-center gap-2 gap-sm-3 my-3">
+            <select class="form-select w-100 w-sm-auto" v-model="selectPriceRange" @change="filterByPriceRange($event)"
+                style="border:1px solid #4edce2">
                 <option value="" disabled>Select Price Range</option>
                 <option value="all">All Price</option>
                 <option value="0-100">0-100</option>
                 <option value="101-300">101-300</option>
                 <option value="301-99999">300+</option>
             </select>
-            <select class="form-select w-auto" id="genderFilter" style="border:1px solid #4edce2 "
-                v-model="selectedGender" @change="filterByGender($event)">
+
+
+            <select class="form-select w-100 w-sm-auto" v-model="selectedGender" @change="filterByGender($event)"
+                style="border:1px solid #4edce2">
                 <option value="" disabled>Select Gender Preferences</option>
                 <option value="all">All Gender</option>
                 <option value="Male Only">Male</option>
                 <option value="Female Only">Female</option>
             </select>
-
-
         </div>
         <div v-if="!rooms.length" class="text-center p-5 bg-light rounded shadow-sm">
             <i class="bi bi-door-closed text-secondary" style="font-size: 3rem;"></i>
@@ -43,14 +47,17 @@
             :key="room.room_id">
             <div class="row g-3 align-items-center">
 
+
                 <!-- Image Section -->
                 <div class="col-12 col-md-4" style="min-width: 200px;">
                     <img :src="room.roomImages" :alt="`Image of ${room.dorm?.dorm_name || 'Dorm'}`"
                         class="img-fluid rounded" style="object-fit: cover; width: 100%; height: 180px;" />
                 </div>
 
+
                 <!-- Details Section -->
                 <div class="col-12 col-md-8 d-flex flex-column justify-content-between">
+
 
                     <!-- Title -->
                     <div class="text-black px-2 py-1">
@@ -59,6 +66,7 @@
                             {{ room.listingType || 'Available Dorm' }}
                         </h5>
                     </div>
+
 
                     <!-- Tags -->
                     <div class="d-flex flex-wrap gap-2 mt-2 px-2">
@@ -76,6 +84,7 @@
                         </span>
                     </div>
 
+
                     <!-- Price -->
                     <div class="d-flex justify-content-between align-items-center mt-3 px-2 flex-wrap">
                         <span class="fw-bold text-success fs-5">
@@ -83,6 +92,7 @@
                             Head
                         </span>
                     </div>
+
 
                     <!-- Action Buttons -->
                     <div class="d-flex justify-content-between align-items-center mt-3 mb-2 px-2 flex-wrap">
@@ -102,9 +112,11 @@
                         </div>
                     </div>
 
+
                 </div>
             </div>
         </div>
+
 
         <div class="d-flex justify-content-center mb-3 mt-3" v-if="rooms.length > 3">
             <a href="#" @click.prevent="toggleShowMore">
@@ -115,6 +127,7 @@
             style="background-color: rgba(0,0,0,0.5);">
             <div class="modal-dialog modal-lg modal-dialog-centered">
                 <div class="modal-content shadow-lg rounded-4 overflow-hidden">
+
 
                     <!-- Modal Header -->
                     <div class="modal-header bg-info  text-white">
@@ -129,6 +142,7 @@
                                 :alt="`Image of ${roomsDetail?.room_type || 'Room'}`" />
                         </div>
 
+
                         <!-- Room Info -->
                         <div class="row g-4">
                             <!-- Left Column -->
@@ -140,12 +154,14 @@
                                     <div class="text-dark fw-medium">{{ roomsDetail?.roomNumber || 'N/A' }}</div>
                                 </div>
 
+
                                 <div class="bg-light border rounded-3 p-3 shadow-sm mb-3">
                                     <label class="form-label fw-semibold text-secondary">
                                         <i class="bi bi-door-open-fill me-2 text-primary"></i> Room Type
                                     </label>
                                     <div class="text-dark fw-medium">{{ roomsDetail?.roomType || 'N/A' }}</div>
                                 </div>
+
 
                                 <div class="bg-light border rounded-3 p-3 shadow-sm mb-3">
                                     <label class="form-label fw-semibold text-secondary">
@@ -155,6 +171,7 @@
                                         '0' }}</div>
                                 </div>
                             </div>
+
 
                             <!-- Right Column -->
                             <div class="col-md-6">
@@ -171,6 +188,7 @@
                                     </div>
                                 </div>
 
+
                                 <div class="bg-light border rounded-3 p-3 shadow-sm mb-3">
                                     <label class="form-label fw-semibold text-secondary">
                                         <i class="bi bi-people-fill me-2 text-primary"></i>Current Tenant Name
@@ -178,13 +196,15 @@
                                     <div class="text-dark fw-medium">
                                         <template v-if="roomsDetail.latest_approved_tenant">
                                             {{ roomsDetail.latest_approved_tenant.firstname }} {{
-                                            roomsDetail.latest_approved_tenant.lastname }}
+                                                roomsDetail.latest_approved_tenant.lastname }}
                                         </template>
                                         <template v-else>
                                             <span class="text-muted fst-italic">No tenant yet</span>
                                         </template>
                                     </div>
                                 </div>
+
+
 
 
                                 <div class="bg-light border rounded-3 p-3 shadow-sm mb-3">
@@ -196,10 +216,12 @@
                                         {{ formatDate(roomsDetail.latest_approved_tenant?.moveOutDate) }}
                                     </div>
 
+
                                 </div>
                             </div>
                         </div>
                     </div>
+
 
                     <!-- Modal Body -->
                     <div class="modal-footer justify-content-center">
@@ -207,6 +229,7 @@
                     </div>
                 </div>
                 <!-- Modal Footer -->
+
 
             </div>
         </div>
@@ -216,20 +239,22 @@
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content shadow-lg rounded-4 overflow-hidden">
 
+
                 <!-- Modal Header -->
                 <div class="modal-header bg-info  text-white">
                     <h5 class="modal-title">Room Details</h5>
                     <button type="button" class="btn-close" @click="reservationDetailsModal = false"></button>
                 </div>
 
+
                 <!-- Modal Body -->
                 <div class="modal-body p-4">
                     <!-- Image Preview -->
                     <div class="text-center mb-4">
-                        <img :src="this.imageUrl" class="img-fluid rounded-3 shadow w-50"
-                            style="max-height: 300px; "
+                        <img :src="this.imageUrl" class="img-fluid rounded-3 shadow w-50" style="max-height: 300px; "
                             :alt="`Image of ${roomsDetail?.room_type || 'Room'}`" />
                     </div>
+
 
                     <!-- Personal Information -->
                     <div class="row g-4 mb-3">
@@ -251,6 +276,7 @@
                         </div>
                     </div>
 
+
                     <div class="row g-4 mb-3">
                         <div class="col-md-6">
                             <div class="bg-light border rounded-3 p-3 h-100 shadow-sm">
@@ -269,6 +295,7 @@
                             </div>
                         </div>
                     </div>
+
 
                     <div class="row g-4">
                         <div class="col-md-6">
@@ -297,12 +324,16 @@
                 </div>
             </div>
 
+
         </div>
         <Modalconfirmation ref="modal" />
 
+
     </div>
 
+
 </template>
+
 <script>
 import axios from 'axios'
 import Toastcomponents from '@/components/Toastcomponents.vue';
