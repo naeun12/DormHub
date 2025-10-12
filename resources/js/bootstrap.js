@@ -16,9 +16,14 @@ window.Echo = new Echo({
 });
 
 
-console.log('PUSHER_KEY:', import.meta.env.VITE_PUSHER_APP_KEY);
-console.log('PUSHER_CLUSTER:', import.meta.env.VITE_PUSHER_APP_CLUSTER);
-console.log(import.meta.env);
+window.Echo.connector.pusher.connection.bind('state_change', (states) => {
+    console.log('Pusher state changed:', states);
+});
+
+window.Echo.connector.pusher.connection.bind('error', (err) => {
+    console.error('Pusher connection error:', err);
+});
+
 
 
 
