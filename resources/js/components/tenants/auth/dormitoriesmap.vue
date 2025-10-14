@@ -110,7 +110,7 @@ export default {
     },
     data() {
         return {
-            logoImage: 'http://127.0.0.1:8000/images/Logo/logo.png',
+            logoImage: 'https://capstonedormhubdeploy1-production.up.railway.app/images/Logo/logo.png',
             map: null,
             draggableMarker: null,
             nearbyDorms: [],
