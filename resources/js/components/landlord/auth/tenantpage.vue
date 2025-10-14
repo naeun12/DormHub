@@ -43,17 +43,20 @@
             <!-- Action Buttons -->
             <div class="ms-md-auto d-flex flex-wrap gap-2 justify-content-end w-100">
                 <button
-                    class="btn btn-success px-3 py-2 shadow-sm fw-semibold d-flex align-items-center gap-2 w-100 w-md-auto">
+                    class="btn btn-success px-3 py-2 shadow-sm fw-semibold d-flex align-items-center gap-2 w-100 w-md-auto"
+                    @click="viewMoveInTenants">
                     <i class="bi bi-house-check fs-5"></i>
                     <span class="text-nowrap">Confirmed Move-in Tenant</span>
                 </button>
                 <button
-                    class="btn btn-primary px-3 py-2 shadow-sm fw-semibold d-flex align-items-center gap-2 w-100 w-md-auto">
+                    class="btn btn-primary px-3 py-2 shadow-sm fw-semibold d-flex align-items-center gap-2 w-100 w-md-auto"
+                    @click="downloadReport">
                     <i class="bi bi-file-earmark-text fs-5"></i>
                     <span class="text-nowrap">Generate Active Tenant Report</span>
                 </button>
                 <button
-                    class="btn btn-secondary px-3 py-2 shadow-sm fw-semibold d-flex align-items-center gap-2 w-100 w-md-auto">
+                    class="btn btn-secondary px-3 py-2 shadow-sm fw-semibold d-flex align-items-center gap-2 w-100 w-md-auto"
+                    @click="extensionReport">
                     <i class="bi bi-file-earmark-text fs-5"></i>
                     <span class="text-nowrap">Generate Extension Payment Report</span>
                 </button>

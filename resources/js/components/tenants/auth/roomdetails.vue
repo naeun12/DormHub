@@ -3,7 +3,6 @@
     <Toastcomponents ref="toast" />
     <NotificationList ref="toastRef" />
 
-
     <div class="m-3 my-4" v-if="dorm">
         <!-- Header -->
         <div class="row mb-4 align-items-center border-bottom pb-3 shadow-sm rounded bg-light px-3 py-3">
@@ -16,14 +15,12 @@
                     <i class="bi bi-robot fs-5 me-2"></i> Smart Guide
                 </button>
 
-
                 <button class="btn btn-outline-success px-3 py-2 rounded-pill d-flex align-items-center"
                     @click="messagePage">
                     <i class="bi bi-envelope-fill fs-5 me-2"></i> Message
                 </button>
             </div>
         </div>
-
 
         <!-- Main Content -->
         <div class="row gy-4">
@@ -43,7 +40,6 @@
                 </div>
             </div>
 
-
             <!-- Amenities and Room Features -->
             <div class="col-12 col-md-4">
                 <div class="bg-light rounded p-3 shadow-sm mb-3">
@@ -60,7 +56,6 @@
                         </a>
                     </div>
                 </div>
-
 
                 <div class="bg-light rounded p-3 shadow-sm">
                     <h5 class="fw-bold mb-2"><i class="bi bi-door-open me-2"></i>Rating and Review</h5>
@@ -82,7 +77,6 @@
                 </div>
             </div>
 
-
             <!-- Rules and Contact -->
             <div class="col-12 col-md-4">
                 <div class="bg-light rounded p-3 shadow-sm mb-3">
@@ -100,7 +94,6 @@
                     </div>
                 </div>
 
-
                 <div class="bg-light rounded p-3 shadow-sm">
                     <h5 class="fw-bold mb-3"><i class="bi bi-person-lines-fill me-2 text-primary"></i>Contact
                         Information</h5>
@@ -112,7 +105,6 @@
                 </div>
             </div>
         </div>
-
 
         <!-- Property Details and Form -->
         <div class="row mt-3 gy-4">
@@ -152,7 +144,6 @@
                         </div>
                     </div>
 
-
                     <h5 class="fw-bold mt-3 mb-2"><i class="bi bi-cash-coin me-2"></i>Room Pricing</h5>
                     <div class="card shadow-sm mb-3 p-2" style="max-height: 350px; overflow-y: auto;">
                         <div class="d-flex align-items-center mb-2">
@@ -174,7 +165,6 @@
                 </div>
             </div>
 
-
             <!-- Booking Form -->
             <div class="col-12 col-md-4">
                 <form class="border rounded p-3 shadow-sm bg-white">
@@ -188,14 +178,12 @@
                         <span v-if="errors.firstname" class="text-danger small">{{ errors.firstname[0] }}</span>
                     </div>
 
-
                     <div class="mb-2">
                         <label class="form-label fw-semibold">Last Name</label>
                         <input type="text" v-model="lastname" class="form-control shadow-sm"
                             placeholder="Enter your last name" />
                         <span v-if="errors.lastname" class="text-danger small">{{ errors.lastname[0] }}</span>
                     </div>
-
 
                     <div class="mb-2">
                         <label class="form-label fw-semibold">Contact Number</label>
@@ -204,7 +192,6 @@
                         <span v-if="errors.contactInfo" class="text-danger small">{{ errors.contactInfo[0] }}</span>
                     </div>
 
-
                     <div class="mb-2">
                         <label class="form-label fw-semibold">Email Address</label>
                         <input type="email" v-model="email" class="form-control shadow-sm"
@@ -212,14 +199,12 @@
                         <span v-if="errors.email" class="text-danger small">{{ errors.email[0] }}</span>
                     </div>
 
-
                     <div class="mb-2">
                         <label class="form-label fw-semibold">Age</label>
                         <input type="number" v-model.number="age" class="form-control shadow-sm" min="15" max="60"
                             placeholder="Enter your age" />
                         <span v-if="errors.age" class="text-danger small">{{ errors.age[0] }}</span>
                     </div>
-
 
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Sex</label>
@@ -230,7 +215,6 @@
                         </select>
                         <span v-if="errors.sex" class="text-danger small">{{ errors.sex[0] }}</span>
                     </div>
-
 
                     <button type="button" @click="submitTenantInformation"
                         class="btn btn-primary w-100 fw-bold">Submit</button>
@@ -253,7 +237,6 @@
                     <!-- Hidden File Input -->
                     <input ref="idPicturesInput" class="d-none" type="file" accept="image/*" @change="handleidPictre" />
 
-
                     <!-- Upload Prompt -->
                     <div class="d-flex flex-column align-items-center text-center mb-3">
                         <img :src="id_picture" alt="Payment Icon" style="max-width: 60px; height: auto;" class="mb-2" />
@@ -261,7 +244,6 @@
                         <small class="text-muted">Click to browse and select an image file</small>
                     </div>
                 </div>
-
 
                 <!-- Preview Container -->
                 <div v-if="idPicturePreview" class="text-center mb-3">
@@ -275,8 +257,6 @@
                     </div>
 
 
-
-
                 </div>
                 <div class="d-flex justify-content-center align-items-center">
                     <button type="button" class="custom-btn mb-3 w-50" @click="tenantIdpicture">
@@ -284,13 +264,123 @@
                     </button>
                 </div>
 
-
             </div>
         </div>
     </div>
-    <!-- Modals (unchanged for logic) -->
+    <div v-if="roomDetailsModal" class="modal fade show d-block w-100" tabindex="-1"
+        style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content shadow-lg rounded-4 overflow-hidden py-1">
+                <!-- Header -->
+                <div class="modal-header text-black border-bottom">
+                    <h5 class="modal-title">{{ selectedRoomDetails.roomType || 'Room Details' }}</h5>
+                    <button type="button" class="btn-close" @click="roomDetailsModal = false"></button>
+                </div>
+
+                <!-- Body -->
+                <div class="modal-body">
+                    <div class="row g-4">
+                        <!-- Left: Room Images / Carousel -->
+                        <div class="col-md-6">
+                            <div v-if="selectedRoomDetails.roomImages" class="overflow-hidden rounded shadow-sm">
+                                <img :src="selectedRoomDetails.roomImages"
+                                    class="img-fluid w-100 h-100 object-fit-cover" alt="Room Image">
+                            </div>
+                            <div v-else
+                                class="border rounded d-flex align-items-center justify-content-center p-5 text-muted">
+                                No image available
+                            </div>
+                        </div>
+
+                        <!-- Right: Room Info -->
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <h5 class="fw-bold mb-1">{{ selectedRoomDetails.roomType || 'Room Type' }}</h5>
+                                <p class="text-success fs-5 mb-0">₱{{ selectedRoomDetails.price?.toLocaleString() }}</p>
+                                <small class="text-muted">{{ selectedRoomDetails.furnishing_status || 'Furnishing info                                   not available' }}</small>
+                            </div>
+
+                            <hr class="my-3">
+
+                            <div class="mb-3">
+                                <h6 class="fw-semibold">Area</h6>
+                                <p>{{ selectedRoomDetails.areaSqm }} sqm</p>
+                            </div>
+
+                            <div class="mb-3">
+                                <h6 class="fw-semibold">Features</h6>
+                                <div v-if="selectedRoomDetails.features && selectedRoomDetails.features.length > 0"
+                                    class="d-flex flex-wrap gap-2 overflow-auto" style="max-height: 150px;">
+                                    <span v-for="feature in selectedRoomDetails.features" :key="feature.id"
+                                        class="badge bg-success text-white">
+                                        {{ feature.featureName }}
+                                    </span>
+                                </div>
+                                <div v-else class="text-muted fst-italic">
+                                    No features
+                                </div>
+                            </div>
+
+
+                            <div class="mb-3">
+                                <h6 class="fw-semibold">Availability</h6>
+                                <span
+                                    :class="selectedRoomDetails.availability ? 'badge bg-success' : 'badge bg-danger'">
+                                    {{ selectedRoomDetails.availability ? 'Available' : 'Not Available' }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="modal-footer border-top">
+                    <button type="button" class="btn btn-secondary" @click="roomDetailsModal = false">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div v-if="askAIModal" class="modal fade show d-block w-100" tabindex="-1"
+        style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content shadow-lg rounded-4 overflow-hidden">
+
+                <!-- Header -->
+                <div class="modal-header bg-gradient ">
+                    <h5 class="modal-title d-flex align-items-center">
+                        <i class="bi bi-robot fs-4 me-2"></i> Smart Guide for {{ selectedDormAI.dormName }}
+                    </h5>
+                    <button type="button" class="btn-close btn-close-black" @click="askAIModal = false"></button>
+                </div>
+
+                <!-- Body -->
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="aiQuestion" class="form-label fw-semibold">Your Question</label>
+                        <textarea id="aiQuestion" v-model="aiQuestion" class="form-control rounded-3 shadow-sm" rows="4"
+                            placeholder="Type your question about dormitory..."></textarea>
+                    </div>
+                    <div v-if="aiResponse" class="alert alert-light border shadow-sm rounded-3">
+                        <h6 class="fw-bold mb-2"><i class="bi bi-cpu me-2 text-primary"></i> AI Response</h6>
+                        <p class="mb-0">{{ aiResponse }}</p>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="modal-footer d-flex justify-content-between">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill" @click="askAIModal = false">
+                        <i class="bi bi-x-circle me-2"></i> Close
+                    </button>
+                    <button type="button" class="btn btn-primary rounded-pill shadow-sm" @click="sendToAI">
+                        <i class="bi bi-send-fill me-2"></i> Ask AI
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
     <Modalconfirmation ref="modal" />
 </template>
+
 
 <script>
 import axios from 'axios';
