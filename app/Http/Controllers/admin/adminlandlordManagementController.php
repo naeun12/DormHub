@@ -95,7 +95,8 @@ public function downloadLandlordReport()
     $pdf = Pdf::loadView('admin.auth.reports.landlord-report', compact('landlords','logoPath'));
 
     // Download as PDF
-    return $pdf->download('landlord_report.pdf');
+        return $pdf->stream("landlord_report.pdf");
+
 }
 public function searchLandlords(Request $request)
 {

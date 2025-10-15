@@ -94,7 +94,7 @@ public function downloadTenantReport()
     $pdf = Pdf::loadView('admin.auth.reports.tenant-report', compact('tenants','logoPath'));
 
     // Download as PDF
-    return $pdf->download('tenant_report.pdf');
+    return $pdf->stream("tenant_report.pdf");
 }
 public function searchTenants(Request $request)
 {

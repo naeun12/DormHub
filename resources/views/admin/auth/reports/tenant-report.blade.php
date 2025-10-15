@@ -54,7 +54,7 @@
   <!-- Header -->
 <div class="header" style="text-align: center;">
     <img src="{{ $logoPath }}" class="logo" style="display: block; margin: 0 auto;">
-    <h2>Subscription Report</h2>
+    <h2>Tenant List Report</h2>
     <p>Generated: {{ now()->format('F d, Y h:i A') }}</p>
 </div>
 
