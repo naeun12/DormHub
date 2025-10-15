@@ -59,8 +59,8 @@
 
             <!-- Desktop Buttons -->
             <div class="d-flex gap-2 ms-3">
-                <a href="{{route('login-tenant')}}" class="btn btn-outline-secondary fw-semibold">Tenant</a>
-                <a href="{{ route('landlord-Login') }}" class="btn btn-primary fw-semibold disabled">Landlord</a>
+                <a href="{{route('login-tenant')}}" class="btn btn-outline-secondary fw-semibold disabled">Tenant</a>
+                <a href="{{ route('landlord-Login') }}" class="btn btn-primary fw-semibold ">Landlord</a>
             </div>
         </div>
     </div>
