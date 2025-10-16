@@ -12,16 +12,26 @@
                             class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-2 px-3 shadow-sm rounded mb-2 transition"
                             :class="[
                                 convo.is_read === 0
-                                    ? 'bg-primary text-white'   // 👈 unread
-                                    : 'bg-info text-dark'       // 👈 read
-                            ]" @click.prevent="selectConversation(convo)" style="border: none; cursor: pointer;">
-
+                                    ? 'bg-primary text-white'
+                                    : 'bg-info text-dark'
+                            ]" @click.prevent="selectConversation(convo)"
+                            style="border: none; cursor: pointer; position: relative;">
                             <!-- Profile Picture -->
-                            <img :src="convo.receiver_profile || 'default-profile.png'" alt="Profile"
-                                class="rounded-circle border" style="width: 48px; height: 48px; object-fit: cover;" />
+                            <div class="position-relative">
+                                <img :src="convo.receiver_profile || 'default-profile.png'" alt="Profile"
+                                    class="rounded-circle border"
+                                    style="width: 48px; height: 48px; object-fit: cover;" />
+
+                                <!-- Red dot for unread -->
+                                <span v-if="convo.is_read === 0"
+                                    class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
+                                </span>
+
+                            </div>
+
 
                             <!-- Conversation Details -->
-                            <div class="flex-grow-1">
+                            <div class="flex-grow-1 ms-2">
                                 <h6 class="mb-0 fw-semibold text-truncate">
                                     {{ convo.receiver_name }}
                                 </h6>
@@ -30,6 +40,7 @@
                                 </small>
                             </div>
                         </a>
+
                     </div>
                 </div>
 
@@ -47,7 +58,7 @@
                     <div>
                         <h6 class="mb-0 fw-bold text-dark">
                             {{ activeLandlord.firstname ? activeLandlord.firstname + ' ' + activeLandlord.lastname :
-                            'Loading...' }}
+                                'Loading...' }}
                         </h6>
                         <small class="text-muted">Tenant</small>
                     </div>
@@ -141,20 +152,26 @@ export default {
                 });
 
         },
-        selectConversation(convo) {
+        async selectConversation(convo) {
+
 
             this.activeConversationID = convo.conversation_id;
             this.activeLandlord = {
                 firstname: convo.receiver_name.split(' ')[0] || '',
                 lastname: convo.receiver_name.split(' ')[1] || '',
-                profilePicUrl: convo.receiver_profile
+                profilePicUrl: convo.receiver_profile,
+                is_read: convo.is_read
             };
-
-            console.log('sds',this.activeLandlord.profilePicUrl)
-
             this.fetchMessages(convo.conversation_id);
             if (this.messagePollInterval) {
                 clearInterval(this.messagePollInterval);
+            }
+            const res = await axios.post(`/api/landlord/markasread/${this.activeConversationID}`);
+
+            if (res.data.success) {
+                convo.is_read = 1;
+            } else {
+                console.error("Failed to mark conversation as read");
             }
 
         },
@@ -204,6 +221,7 @@ export default {
             this.conversations.forEach(convo => {
                 const channelName = `chat.${convo.conversation_id}`;
                 console.log(channelName);
+
                 window.Echo.private(channelName)
                     .subscribed(() => {
                     })

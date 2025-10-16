@@ -196,6 +196,8 @@ Route::middleware([LandlordAuth::class])->group(function () {
     Route::get('/api/select/landlord/conversations/{landlord_id}', [messagelandlordController::class, 'selecttenantToMessage']);
     Route::get('/api/get/landlord/messages/{conversation_id}', [messagelandlordController::class, 'getMessages']);
     Route::post('/api/landlord/messages', [messagelandlordController::class, 'sendMessage']);
+     Route::post('/api/landlord/markasread/{id}', [messagelandlordController::class, 'markAsRead']);
+
     //functions for notfications landlord
     Route::get('/notifications/lanlodrd/{landlord_id}', [notificationslandlordController::class, 'notificationsLandlord'])->name('notifications.landlord');
     Route::get('/get/notifications/landlord/{landlord_id}', [notificationslandlordController::class, 'getLandlordNotificationsList']);
@@ -270,6 +272,7 @@ Route::middleware([TenantAuth::class])->group(function () {
     Route::get('/api/tenant/conversations/{tenant_id}', [tenantmessageController::class, 'getLandlordConversation']);
     Route::get('/api/get/tenant/messages/{conversation_id}', [tenantmessageController::class, 'getLandlordMessages']);
     Route::post('/api/tenant/messages', [tenantmessageController::class, 'sendLandlordMessage']);
+    Route::post('/api/tenant/markasread/{id}', [tenantmessageController::class, 'markAsRead']);
     // view booking
     
     Route::get('/view/booking/{tenant_id}', [mybookingController::class, 'viewBooking'])->name('view.booking');

@@ -114,7 +114,7 @@ class tenantmessageController extends Controller
     public function getLandlordConversation($tenant_id)
     {
         $conversations = conversationModel::where('topic', 'like', '%tenant_' . $tenant_id . '%')->get();
-        $history = $conversations->map(function ($convo) {
+        $history = $conversations->map(function ($convo) use ($tenant_id) {
         preg_match('/landlord_([a-z0-9\-]+)/', $convo->topic, $matches);
         $landlord_id = $matches[1] ?? null;
         $landlord = $landlord_id ? landlordModel::find($landlord_id) : null;
@@ -122,6 +122,10 @@ class tenantmessageController extends Controller
         $lastMessage = messageModel::where('conversationID', $convo->id)
             ->orderBy('sentAt', 'desc')
             ->first();
+             $hasUnread = messageModel::where('conversationID', $convo->id)
+            ->where('receiverID', $tenant_id)
+            ->where('isRead', 0)
+            ->exists();
 
         return [
             'conversation_id'   => $convo->id,
@@ -129,6 +133,7 @@ class tenantmessageController extends Controller
             'receiver_profile'  => $landlord->profilePicUrl ?? 'default-profile.png',
             'last_message'      => $lastMessage->message ?? '(No messages yet)',
             'sent_at'           => $lastMessage->sentAt ?? null,
+            'is_read'           => $hasUnread ? 0 : 1, // 0 = unread, 1 = read
         ];
     });
     return response()->json($history);
@@ -202,6 +207,19 @@ class tenantmessageController extends Controller
         'success' => true,
         'message' => 'Message sent successfully.',
         'data' => $message
+    ]);
+}
+public function markAsRead($id)
+{
+    $tenant_id = session('tenant_id');
+    $updated = messageModel::where('conversationID', $id)
+        ->where('isRead', 0)
+        ->where('receiverID', $tenant_id)
+        ->update(['isRead' => 1]);
+
+    return response()->json([
+        'success' => true,
+        'message' => "$updated messages marked as read."
     ]);
 }
 }

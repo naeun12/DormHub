@@ -11,20 +11,30 @@
                             class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-2 px-3 shadow-sm rounded mb-2 transition"
                             :class="isActiveConversation(convo.conversation_id) ? 'bg-primary text-white' : 'bg-light text-dark'"
                             @click.prevent="selectConversation(convo)" style="border: none; cursor: pointer;">
+                            <!-- Profile + red dot wrapper -->
+                            <div class="position-relative">
+                                <img :src="convo.receiver_profile ? `/${convo.receiver_profile}` : '/default-profile.png'"
+                                    class="rounded-circle border"
+                                    style="width: 48px; height: 48px; object-fit: cover;" />
 
-                            <img :src="`/${convo.receiver_profile}` || '/default-profile.png'"
-                                class="rounded-circle border" style="width: 48px; height: 48px; object-fit: cover;" />
+                                <!-- Red dot for unread -->
+                                <span v-if="convo.is_read === 0"
+                                    class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"
+                                    style="width: 10px; height: 10px;"></span>
 
-                            <div class="flex-grow-1">
-                                <h6 class="mb-0 fw-semibold text-truncate">
-                                    {{ convo.receiver_name }}
-                                </h6>
+                            </div>
+
+                            <!-- Conversation details -->
+                            <div class="flex-grow-1 ms-2">
+                                <h6 class="mb-0 fw-semibold text-truncate">{{ convo.receiver_name }}</h6>
                                 <small
-                                    :class="isActiveConversation(convo.conversation_id) ? 'text-white-50' : 'text-muted'">
+                                    :class="isActiveConversation(convo.conversation_id) ? 'text-white-50' : 'text-muted'"
+                                    class="text-truncate d-block">
                                     {{ convo.last_message }}
                                 </small>
                             </div>
                         </a>
+
                     </div>
                 </div>
             </div>
@@ -119,14 +129,22 @@ export default {
                 });
 
         },
-        selectConversation(convo) {
+        async selectConversation(convo) {
             this.activeConversationID = convo.conversation_id;
             this.activeLandlord = {
                 firstname: convo.receiver_name.split(' ')[0] || '',
                 lastname: convo.receiver_name.split(' ')[1] || '',
-                profilePicUrl: convo.receiver_profile || 'default-profile.png'
+                profilePicUrl: convo.receiver_profile || 'default-profile.png',
+                is_read: convo.is_read
             };
             this.fetchMessages(convo.conversation_id);
+            const res = await axios.post(`/api/tenant/markasread/${this.activeConversationID}`);
+
+            if (res.data.success) {
+                convo.is_read = 1;
+            } else {
+                console.error("Failed to mark conversation as read");
+            }
 
         },
         fetchMessages(conversationID) {
@@ -139,6 +157,7 @@ export default {
                 }).catch(err => {
                     console.error("Failed to fetch messages:", err);
                 });
+
         },
         subscribeToConversations() {
             this.conversations.forEach(convo => {

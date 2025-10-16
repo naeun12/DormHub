@@ -111,12 +111,11 @@ public function selecttenantToMessage(Request $request, $landlord_id)
     ]);
 }
 
-
-    public function getConversations($landlord_id)
+public function getConversations($landlord_id)
 {
     $conversations = conversationModel::where('topic', 'like', '%landlord_' . $landlord_id . '%')->get();
 
-    $history = $conversations->map(function ($convo) {
+    $history = $conversations->map(function ($convo) use ($landlord_id) {
         preg_match('/tenant_([a-z0-9\-]+)/', $convo->topic, $matches);
         $tenant_id = $matches[1] ?? null;
         $tenant = $tenant_id ? tenantModel::find($tenant_id) : null;
@@ -125,23 +124,26 @@ public function selecttenantToMessage(Request $request, $landlord_id)
             ->orderBy('sentAt', 'desc')
             ->first();
 
+        $hasUnread = messageModel::where('conversationID', $convo->id)
+            ->where('receiverID', $landlord_id)
+            ->where('isRead', 0)
+            ->exists();
+
         return [
             'conversation_id'   => $convo->id,
             'receiver_name'     => $tenant ? $tenant->firstname . ' ' . $tenant->lastname : 'Unknown Tenant',
-            'receiver_profile' => $tenant->profilePicUrl
-            ? asset('storage/' . $tenant->profilePicUrl)
-            : asset('storage/uploads/profilePic/default-profile.png'),
-
-
-
-
+            'receiver_profile'  => $tenant && $tenant->profilePicUrl
+                                    ? asset('storage/' . $tenant->profilePicUrl)
+                                    : asset('storage/uploads/profilePic/default-profile.png'),
             'last_message'      => $lastMessage->message ?? '(No messages yet)',
             'sent_at'           => $lastMessage->sentAt ?? null,
+            'is_read'           => $hasUnread ? 0 : 1,
         ];
     });
 
     return response()->json($history);
 }
+
 public function getMessages($conversation_id)
 {
     $messages = \App\Models\messageModel::where('conversationID', $conversation_id)
@@ -159,11 +161,7 @@ public function sendMessage(Request $request)
         'senderRole' => 'required|in:tenant,landlord',
         
     ]);
-
-    // Get the conversation
     $conversation = \App\Models\conversationModel::find($validated['conversationID']);
-
-    // Extract tenant and landlord IDs from the topic
     preg_match('/tenant_([a-z0-9\-]+)_landlord_([a-z0-9\-]+)/', $conversation->topic, $matches);
     $tenantID = $matches[1] ?? null;
     $landlordID = $matches[2] ?? null;
@@ -179,8 +177,6 @@ public function sendMessage(Request $request)
             'message' => 'Unable to resolve receiver ID from topic.'
         ], 422);
     }
-
-    // Create message
     $message = new \App\Models\messageModel();
     $message->conversationID = $validated['conversationID'];
     $message->message = $validated['message'];
@@ -192,6 +188,18 @@ public function sendMessage(Request $request)
     $message->isRead = 0;
     $message->save();
     broadcast(new MessageSent($message))->toOthers();
+    $notifications = notificationModel::create([
+            'senderID'     => $message->senderID,
+            'senderType'   => 'tenant',
+            'receiverID'   => $message->receiverID,
+            'receiverType' => 'Tenant',
+            'title'        => 'Landlord Send a message',
+            'message'      => "A landlord has sent you a message",
+            'isRead'       => false,
+            'readAt'       => null,
+            ]);
+           broadcast(new \App\Events\NewNotificationEvent($notifications));
+
 
 
     return response()->json([
@@ -200,6 +208,18 @@ public function sendMessage(Request $request)
         'data' => $message
     ]);
 }
+public function markAsRead($id)
+{
+    $landlord_id = session('landlord_id');
+    $updated = messageModel::where('conversationID', $id)
+        ->where('isRead', 0)
+        ->where('receiverID', $landlord_id)
+        ->update(['isRead' => 1]);
 
+    return response()->json([
+        'success' => true,
+        'message' => "$updated messages marked as read."
+    ]);
+}
 
 }
