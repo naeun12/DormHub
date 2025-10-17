@@ -1,27 +1,23 @@
 @include('landingpage.partials.navigation')
 <main>
 
-    <!-- Home Section -->
     <section id="home" class="py-5">
+    <!-- Hero Section -->
+    <div class="container-fluid px-0 position-relative" style="height: 80vh; overflow: hidden;">
+        <!-- Background Image -->
+        <img src="{{ asset('images/landingpage/giphy.gif') }}" alt="Person sitting on a bunk bed"
+             class="w-100 h-100 position-absolute top-0 start-0" style="object-fit: cover; filter: brightness(0.4);">
 
-        <div class="container-fluid px-0 position-relative" style="height: 80vh; overflow: hidden;">
-            <!-- Background Image -->
-            <img src="{{ asset('images/landingpage/giphy.gif') }}" alt="Person sitting on a bunk bed"
-                class="w-100 h-100 position-absolute top-0 start-0" style="object-fit: cover; filter: brightness(0.4);" />
+        <!-- Dark Overlay -->
+        <div class="position-absolute top-0 start-0 w-100 h-100"
+             style="background: linear-gradient(to right, rgba(0, 0, 0, 0.6), rgba(0,0,0,0.2)); z-index: 1;">
+        </div>
 
-            <!-- Optional dark gradient overlay -->
-            <div class="position-absolute top-0 start-0 w-100 h-100"
-                style="
-                background: linear-gradient(to right, rgba(0, 0, 0, 0.6), rgba(0,0,0,0.2));
-                z-index: 1;">
-            </div>
-
-            <!-- Content Overlay -->
+        <!-- Content Overlay -->
         <div class="position-relative z-2 d-flex align-items-center justify-content-center px-3 px-md-5"
-            style="min-height: 60vh;">
+             style="min-height: 60vh;">
             <div class="bg-white bg-opacity-10 text-white p-5 rounded-4 shadow-lg backdrop-blur"
-                style="max-width: 700px; width: 100%; border: 1px solid rgba(255,255,255,0.15);">
-
+                 style="max-width: 700px; width: 100%; border: 1px solid rgba(255,255,255,0.15);">
                 <h1 class="fw-bold mb-3 text-white" style="font-size: clamp(1.8rem, 6vw, 2.8rem);">
                     Welcome to <span style="color: #4edce2;">DormHub</span>
                 </h1>
@@ -37,210 +33,148 @@
 
                 <p class="mb-2" style="font-size: clamp(0.8rem, 2vw, 1rem);">Sign up as:</p>
 
+                <!-- Buttons -->
                 <div class="d-flex gap-3 flex-column flex-sm-row">
-                        <a href="{{ route('landlord-Login') }}"
-                            class="btn  text-white rounded-pill px-4 fw-semibold shadow">
-                            Landlord
-                        </a>
-                        <a href="{{ route('login-tenant') }}" class="btn  rounded-pill px-4 fw-semibold">
-                            Tenant
-                        </a>
-                    </div>
+                    <a href="{{ route('landlord-Login') }}"
+                       class="btn btn-primary text-white rounded-pill px-4 py-2 fw-semibold shadow">
+                        Landlord
+                    </a>
+                    <a href="{{ route('login-tenant') }}"
+                       class="btn btn-outline-light rounded-pill px-4 py-2 fw-semibold">
+                        Tenant
+                    </a>
+                </div>
             </div>
         </div>
+    </div>
 
-        </div>
-        <!-- Cards Section (Overlap sa Background Image) -->
-        <div class="container position-relative" style="margin-top: -120px; z-index: 5;">
-            <h2 class="text-center fw-bold mb-5 text-white">✨ Benefits of DormHub ✨</h2>
-            <div class="row g-4">
-
-                <!-- Card 1 -->
-                <div class="col-md-4">
-                    <div class="card shadow-lg border-0 rounded-4 h-100 hover-card text-center p-4">
-                        <div class="icon-wrapper mb-3">
-                            📍
-                        </div>
-                        <h5 class="fw-bold text-gradient">Easy Search</h5>
-                        <p class="text-muted">
-                            Quickly find dormitories around Lapu-Lapu and Mandaue City with filters for price, location, and amenities.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Card 2 -->
-                <div class="col-md-4">
-                    <div class="card shadow-lg border-0 rounded-4 h-100 hover-card text-center p-4">
-                        <div class="icon-wrapper mb-3">
-                            💸
-                        </div>
-                        <h5 class="fw-bold text-gradient">Affordable Options</h5>
-                        <p class="text-muted">
-                            Access budget-friendly dorms suited for students and workers with transparent pricing.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Card 3 -->
-                <div class="col-md-4">
-                    <div class="card shadow-lg border-0 rounded-4 h-100 hover-card text-center p-4">
-                        <div class="icon-wrapper mb-3">
-                            🔒
-                        </div>
-                        <h5 class="fw-bold text-gradient">Safe & Verified</h5>
-                        <p class="text-muted">
-                            All listings are verified to ensure secure and trustworthy accommodations.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Card 4 -->
-              <div class="col-md-4">
-            <div class="card shadow-lg border-0 rounded-4 h-100 hover-card text-center p-4">
-                <div class="icon-wrapper mb-3">
-                    🏠
-                </div>
-                <h5 class="fw-bold text-gradient">Booking & Reservation</h5>
-                <p class="text-muted">
-                    Easily reserve your preferred dorm room or instantly book and confirm your stay 
-                    with our hassle-free system.
-                </p>
-            </div>
-        </div>
-
-
-                <!-- Card 5 -->
-                        <div class="col-md-4">
+    <!-- Benefits Section -->
+    <div class="container position-relative" style="margin-top: -120px; z-index: 5;">
+        <h2 class="text-center fw-bold mb-5 text-white">✨ Benefits of DormHub ✨</h2>
+        <div class="row g-4">
+            <!-- Card Template -->
+            <div class="col-12 col-sm-6 col-md-4">
                 <div class="card shadow-lg border-0 rounded-4 h-100 hover-card text-center p-4">
-                    <div class="icon-wrapper mb-3">
-                        🌐
-                    </div>
+                    <div class="icon-wrapper mb-3 fs-2">📍</div>
+                    <h5 class="fw-bold text-gradient">Easy Search</h5>
+                    <p class="text-muted">Quickly find dormitories around Lapu-Lapu and Mandaue City with filters for price, location, and amenities.</p>
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-6 col-md-4">
+                <div class="card shadow-lg border-0 rounded-4 h-100 hover-card text-center p-4">
+                    <div class="icon-wrapper mb-3 fs-2">💸</div>
+                    <h5 class="fw-bold text-gradient">Affordable Options</h5>
+                    <p class="text-muted">Access budget-friendly dorms suited for students and workers with transparent pricing.</p>
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-6 col-md-4">
+                <div class="card shadow-lg border-0 rounded-4 h-100 hover-card text-center p-4">
+                    <div class="icon-wrapper mb-3 fs-2">🔒</div>
+                    <h5 class="fw-bold text-gradient">Safe & Verified</h5>
+                    <p class="text-muted">All listings are verified to ensure secure and trustworthy accommodations.</p>
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-6 col-md-4">
+                <div class="card shadow-lg border-0 rounded-4 h-100 hover-card text-center p-4">
+                    <div class="icon-wrapper mb-3 fs-2">🏠</div>
+                    <h5 class="fw-bold text-gradient">Booking & Reservation</h5>
+                    <p class="text-muted">Easily reserve your preferred dorm room or instantly book and confirm your stay with our hassle-free system.</p>
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-6 col-md-4">
+                <div class="card shadow-lg border-0 rounded-4 h-100 hover-card text-center p-4">
+                    <div class="icon-wrapper mb-3 fs-2">🌐</div>
                     <h5 class="fw-bold text-gradient">User-Friendly</h5>
-                    <p class="text-muted">
-                        Experience a clean and easy-to-use web platform accessible anytime on your browser.
-                    </p>
+                    <p class="text-muted">Experience a clean and easy-to-use web platform accessible anytime on your browser.</p>
                 </div>
             </div>
 
-
-                <!-- Card 6 -->
-                <div class="col-md-4">
-                    <div class="card shadow-lg border-0 rounded-4 h-100 hover-card text-center p-4">
-                        <div class="icon-wrapper mb-3">
-                            🤝
-                        </div>
-                        <h5 class="fw-bold text-gradient">Community Support</h5>
-                        <p class="text-muted">
-                            Connect with landlords and co-tenants, fostering a safe and supportive community.
-                        </p>
-                    </div>
+            <div class="col-12 col-sm-6 col-md-4">
+                <div class="card shadow-lg border-0 rounded-4 h-100 hover-card text-center p-4">
+                    <div class="icon-wrapper mb-3 fs-2">🤝</div>
+                    <h5 class="fw-bold text-gradient">Community Support</h5>
+                    <p class="text-muted">Connect with landlords and co-tenants, fostering a safe and supportive community.</p>
                 </div>
             </div>
         </div>
-        <div class="container mt-5">
-            <div class="text-center mb-4">
-                <h2 class="fw-bold text-uppercase border-bottom pb-2 d-inline-block" style="color: #4edce2;">
-                    <i class="bi bi-building me-2"></i>Available Dorms
-                </h2>
-                <p class="text-muted mt-2">Explore top dormitory options in Lapu-Lapu and Mandaue City.</p>
-            </div>
+    </div>
+
+    <!-- Available Dorms Section -->
+    <div class="container mt-5">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold text-uppercase border-bottom pb-2 d-inline-block" style="color: #4edce2;">
+                <i class="bi bi-building me-2"></i>Available Dorms
+            </h2>
+            <p class="text-muted mt-2">Explore top dormitory options in Lapu-Lapu and Mandaue City.</p>
         </div>
+
         <div class="m-2 py-4">
             <div class="row g-4">
                 <!-- Large Left Card -->
-                <div class="col-md-6 mb-4">
+                <div class="col-12 col-md-6 mb-4">
                     <div class="card h-100 dorm-card border-0 shadow-sm position-relative overflow-hidden">
-                        <!-- Full-size image -->
-                        <img src="{{ asset('images/landingpage/dorm1.jpg') }}" class="img-fluid w-100 h-100"
-                            alt="Sunshine Dormitory Image" style="object-fit: cover; height: 300px;">
-
-                        <!-- Overlay content -->
-                        <div class="card-img-overlay d-flex flex-column justify-content-end"
-                            style="background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.1));">
+                        <img src="{{ asset('images/landingpage/dorm1.jpg') }}" class="img-fluid w-100" alt="Sunshine Dormitory Image" style="object-fit: cover; height: 300px;">
+                        <div class="card-img-overlay d-flex flex-column justify-content-end" style="background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.1));">
                             <div class="text-white">
                                 <h5 class="card-title">Sunshine Dormitory</h5>
                                 <p class="card-text mb-1">📍 Mandaue City</p>
                                 <p class="card-text">⭐ 4.8</p>
                                 <div class="text-end">
-                                    <button type="button" class="btn mt-2" data-bs-toggle="modal"
-                                        data-bs-target="#exampleModal">
-                                        View Details
-                                    </button>
+                                    <button type="button" class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#exampleModal">View Details</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-
-
-
                 <!-- Right Column -->
-                <div class="col-md-6">
+                <div class="col-12 col-md-6">
                     <!-- Top Right Wide Card -->
                     <div class="card mb-4 border-0 shadow-sm position-relative overflow-hidden">
-                        <!-- Full-width Image -->
-                        <img src="{{ asset('images/landingpage/dorm2.webp') }}" class="img-fluid w-100"
-                            alt="Palm Grove Dorm" style="object-fit: cover; height: 300px;">
-
-                        <!-- Text Overlay -->
-                        <div class="card-img-overlay d-flex flex-column justify-content-end"
-                            style="background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);">
+                        <img src="{{ asset('images/landingpage/dorm2.webp') }}" class="img-fluid w-100" alt="Palm Grove Dorm" style="object-fit: cover; height: 300px;">
+                        <div class="card-img-overlay d-flex flex-column justify-content-end" style="background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);">
                             <div class="text-white">
                                 <h5 class="card-title">Palm Grove Dorm</h5>
                                 <p class="card-text mb-1">📍 Lapu-Lapu City</p>
                                 <p class="card-text">⭐ 4.6</p>
                                 <div class="text-end">
-                                    <button type="button" class="btn  mt-2" data-bs-toggle="modal"
-                                        data-bs-target="#exampleModal">
-                                        View Details
-                                    </button>
+                                    <button type="button" class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#exampleModal">View Details</button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-
                     <!-- Two Smaller Cards -->
                     <div class="row g-4">
-                        <!-- Lapu Cozy Dorm -->
-                        <div class="col-md-6">
+                        <div class="col-6">
                             <div class="card dorm-card border-0 shadow-sm position-relative overflow-hidden">
-                                <img src="{{ asset('images/landingpage/dorm4.jpg') }}" class="img-fluid w-100"
-                                    alt="Lapu Cozy Dormitory Image" style="object-fit: cover; height: 250px;">
-                                <div class="card-img-overlay d-flex flex-column justify-content-end"
-                                    style="background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);">
+                                <img src="{{ asset('images/landingpage/dorm4.jpg') }}" class="img-fluid w-100" alt="Lapu Cozy Dormitory Image" style="object-fit: cover; height: 250px;">
+                                <div class="card-img-overlay d-flex flex-column justify-content-end" style="background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);">
                                     <div class="text-white">
                                         <h5 class="card-title">Lapu Cozy Dorm</h5>
                                         <p class="card-text mb-1">📍 Lapu-Lapu</p>
                                         <p class="card-text">⭐ 4.7</p>
                                         <div class="text-end">
-                                            <button type="button" class="btn mt-2" data-bs-toggle="modal"
-                                                data-bs-target="#exampleModal">
-                                                View Details
-                                            </button>
+                                            <button type="button" class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#exampleModal">View Details</button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Cityside Stay Dorm -->
-                        <div class="col-md-6">
+                        <div class="col-6">
                             <div class="card dorm-card border-0 shadow-sm position-relative overflow-hidden">
-                                <img src="{{ asset('images/landingpage/dorm3.jpg') }}" class="img-fluid w-100"
-                                    alt="Cityside Stay Dormitory Image" style="object-fit: cover; height: 250px;">
-                                <div class="card-img-overlay d-flex flex-column justify-content-end"
-                                    style="background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);">
+                                <img src="{{ asset('images/landingpage/dorm3.jpg') }}" class="img-fluid w-100" alt="Cityside Stay Dormitory Image" style="object-fit: cover; height: 250px;">
+                                <div class="card-img-overlay d-flex flex-column justify-content-end" style="background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);">
                                     <div class="text-white">
                                         <h5 class="card-title">Cityside Stay</h5>
                                         <p class="card-text mb-1">📍 Mandaue</p>
                                         <p class="card-text">⭐ 4.5</p>
                                         <div class="text-end">
-                                            <button type="button" class="btn  mt-2" data-bs-toggle="modal"
-                                                data-bs-target="#exampleModal">
-                                                View Details
-                                            </button>
+                                            <button type="button" class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#exampleModal">View Details</button>
                                         </div>
                                     </div>
                                 </div>
@@ -249,37 +183,32 @@
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Dorm Listings -->
-
-
-            <!-- Modal -->
-            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content shadow-lg border-0 rounded-4">
-                        <div class="modal-header border-0 pb-0">
-                            <h5 class="modal-title fw-bold text-primary" id="exampleModalLabel">Authentication
-                                Required
-                            </h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body text-center py-4 px-4">
-                            <i class="bi bi-person-circle text-primary fs-1 mb-3"></i>
-                            <p class="mb-0 fs-5">To access the details, please log in to your account or sign up if
-                                you're new here. It only takes a moment.</p>
-                        </div>
-                        <div class="modal-footer border-0 d-flex justify-content-center">
-                            <a href="{{ route('login-tenant') }}" class="btn  px-4 py-2 rounded-pill fw-semibold">
-                                Sign Up / Log In
-                            </a>
-                        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content shadow-lg border-0 rounded-4">
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title fw-bold text-primary" id="exampleModalLabel">Authentication Required</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center py-4 px-4">
+                        <i class="bi bi-person-circle text-primary fs-1 mb-3"></i>
+                        <p class="mb-0 fs-5">To access the details, please log in to your account or sign up if you're new here. It only takes a moment.</p>
+                    </div>
+                    <div class="modal-footer border-0 d-flex justify-content-center">
+                        <a href="{{ route('login-tenant') }}" class="btn btn-primary px-4 py-2 rounded-pill fw-semibold">Sign Up / Log In</a>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</section>
 
-    </section>
+<!-- Optional Custom Styles -->
+
+
 
     <!-- About Us Section -->
     <section class="about-us section py-5" data-aos="zoom-out-left" id="about-us"
@@ -673,5 +602,12 @@
         }
     }
 </script>
+<style>
+    @media (max-width: 576px) {
+        .hover-card h5 { font-size: 1rem; }
+        .hover-card p { font-size: 0.85rem; }
+        .btn { font-size: 0.9rem; }
+    }
+</style>
 
 @include('landingpage.partials.footer')
