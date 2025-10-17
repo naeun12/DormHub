@@ -136,6 +136,8 @@
                                 dorm.dorm.totalRooms + ' room(s)' : 'No rooms available' }}</p>
                             <p class="mb-2"><strong>Total tenants currently residing:</strong> {{
                                 dorm.dorm.totalCapacity }} tenant(s)</p>
+                            <p><strong>Description: </strong>{{ dorm.dorm.description }}
+                            </p>
                         </div>
                         <div class="col-md-4">
                             <div class="ratio ratio-4x3">
@@ -297,7 +299,7 @@
                             <div class="mb-3">
                                 <h5 class="fw-bold mb-1">{{ selectedRoomDetails.roomType || 'Room Type' }}</h5>
                                 <p class="text-success fs-5 mb-0">₱{{ selectedRoomDetails.price?.toLocaleString() }}</p>
-                                <small class="text-muted">{{ selectedRoomDetails.furnishing_status || 'Furnishing info                                   not available' }}</small>
+                                <small class="text-muted">{{ selectedRoomDetails.furnishing_status || 'Furnishing info not available' }}</small>
                             </div>
 
                             <hr class="my-3">

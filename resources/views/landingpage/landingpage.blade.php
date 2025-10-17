@@ -415,9 +415,9 @@
             <div class="row justify-content-center mb-4">
                 <div class="col-md-6 text-center">
                     <p class="mb-2"><i class="bi bi-envelope-fill me-2 text-primary"></i><strong>Email:</strong>
-                      supportdormhub@gmail.com</p>
+                      niiinaeun@gmail.com</p>
                     <p class="mb-2"><i class="bi bi-telephone-fill me-2 text-primary"></i><strong>Phone:</strong>
-                        +63 912 345 6789</p>
+                        +63 923 124 1628</p>
                     <p><i class="bi bi-clock-fill me-2 text-primary"></i><strong>Hours:</strong> Mon – Fri, 9:00 AM –
                         5:00 PM</p>
                 </div>
@@ -638,7 +638,6 @@
                 <h5 class="text-dark fw-bold">Follow Us</h5>
                 <div class="d-flex justify-content-center gap-4 mt-3">
                     <a href="https://www.facebook.com/profile.php?id=61580194851438" class="text-dark" target="_blank"><i class="fab fa-facebook fa-lg"></i></a>
-                    <a href="#" class="text-dark" target="_blank"><i class="fab fa-instagram fa-lg"></i></a>
                 </div>
             </div>
 
