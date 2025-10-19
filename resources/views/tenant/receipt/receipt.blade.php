@@ -116,8 +116,9 @@
         </div>
 
         <div class="row"><span class="label">ACCT.:</span> #{{ $tenant->approvedID }}</div>
-        <div class="row"><span class="label">PAID:</span> PHP{{ $tenant->payments->amount}}</div>
-
+        <div class="row">
+            <span class="label">PAID:</span> PHP{{ $latestPayment->amount ?? 0 }}
+        </div>
 
         <div class="options">
             <label>
