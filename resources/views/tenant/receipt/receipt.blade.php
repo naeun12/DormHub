@@ -101,7 +101,7 @@
             <span class="label">From:</span> {{ $tenant->firstname }} {{ $tenant->lastname }}
         </div>
         <div class="row">
-            <span class="label">PHP</span> {{ number_format($totalPaid, 2) }}
+            <span class="label">Montlhy price</span> PHP {{ $tenant->room->price }}
         </div>
         <div class="row">
             <span class="label">Room #</span> {{ $tenant->room->roomNumber }}
@@ -111,18 +111,18 @@
         </div>
 
         <div class="options">
-            <input type="radio" style="background: transparent" checked> For {{$tenant->source}} 
+            <input type="radio" style="background: transparent" checked> For {{$tenant->source_type}} 
             
         </div>
 
         <div class="row"><span class="label">ACCT.:</span> #{{ $tenant->approvedID }}</div>
-        <div class="row"><span class="label">PAID:</span> PHP{{ number_format($totalPaid, 2) }}</div>
+        <div class="row"><span class="label">PAID:</span> PHP{{ $tenant->payments->amount}}</div>
 
 
         <div class="options">
             <label>
                 <input type="checkbox" style="background: transparent"
-                    {{ strtolower($tenant->paymentType) == 'gcash' ? 'checked' : '' }}> Gcash
+                    {{ strtolower($tenant->payments->paymentType) == 'gcash' ? 'checked' : '' }}> Gcash
             </label>
          
            

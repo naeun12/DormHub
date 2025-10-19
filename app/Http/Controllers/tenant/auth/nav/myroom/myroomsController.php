@@ -187,7 +187,6 @@ $latestPayment = $tenant->payments->sortByDesc('created_at')->first();
 
 $data = [
     'tenant' => $tenant,
-    'balance' => $tenant->room->price - $totalPaid, // use totalPaid, not $tenant->amount
     'totalPaid' => $totalPaid,
     'paymentType' => $latestPayment->paymentType ?? null // null-safe
 ];
