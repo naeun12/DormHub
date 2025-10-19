@@ -8,6 +8,8 @@ use App\Models\landlord\roomModel;
 use App\Models\tenant\tenantModel;
 use App\Models\tenant\approvetenantsModel;
 use App\Models\tenant\approvepaymentModel;
+use App\Models\tenant\bookingpaymentModel;
+use App\Models\tenant\reservationpaymentModel;
 use Illuminate\Support\Facades\Validator;
 use App\Models\notificationModel;
 use App\Models\reviewandratingModel;
@@ -179,20 +181,37 @@ else if($paymentOption === 'onsite')
 }
 
 }
-public function generateReceipt($id)
+    public function generateReceipt($id)
 {
-    $tenant = approvetenantsModel::with(['room.dorm','room.landlord', 'payments'])->findOrFail($id);
-$totalPaid = $tenant->payments->sum('amount');
-$latestPayment = $tenant->payments->sortByDesc('created_at')->first();
+    $tenant = approvetenantsModel::with(['room.dorm', 'room.landlord', 'payments'])->findOrFail($id);
 
-$data = [
-    'tenant' => $tenant,
-    'totalPaid' => $totalPaid,
-    'paymentType' => $latestPayment->paymentType ?? null // null-safe
-];
+    // Initialize payment variables
+    $latestPayment = null;
+    $totalPaid = 0;
 
-$pdf = PDF::loadView('tenant.receipt.receipt', $data);
-return $pdf->stream('receipt.pdf'); 
+    // Determine payment based on source type
+    if($tenant->source_type === 'Booking') {
+        $payments = bookingpaymentModel::where('fkbookingID', $tenant->source_id)->get();
+    } elseif($tenant->source_type === 'Reservation') {
+        $payments = reservationpaymentModel::where('reservationID', $tenant->source_id)->get();
+    } else {
+        $payments = $tenant->payments; // fallback to approvepayments
+    }
+
+    // Compute total and latest payment
+    $totalPaid = $payments->sum('amount');
+    $latestPayment = $payments->sortByDesc('created_at')->first();
+
+    // Prepare data for the PDF
+    $data = [
+        'tenant' => $tenant,
+        'totalPaid' => $totalPaid,
+        'latestPayment' => $latestPayment,
+        'paymentType' => $latestPayment->paymentType ?? null
+    ];
+
+    $pdf = PDF::loadView('tenant.receipt.receipt', $data);
+    return $pdf->stream('receipt.pdf');
 }
 
   public function ReviewAndRating(Request $request)
@@ -215,8 +234,6 @@ return $pdf->stream('receipt.pdf');
 
     $dormID = $room->fkdormID;
     $approvedID = $request->approvedID;
-
-    // Check if this approved tenant already reviewed this dorm
     $existing = reviewandratingModel::where('fkdormID', $dormID)
                 ->where('fkapprovedID', $approvedID)
                 ->first();

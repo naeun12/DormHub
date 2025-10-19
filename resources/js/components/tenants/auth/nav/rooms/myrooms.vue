@@ -59,9 +59,13 @@
                                     <strong>Contact #:</strong> {{ tenant.contactNumber }}
                                 </li>
                             </ul>
-                            <button class="custom-btn" @click="viewReceipt(tenant.approvedID)">
-                                <i class="bi bi-file-earmark-pdf"></i> View Receipt
-                            </button>
+                            <div v-if="tenant.status === 'pending'">
+                                <button class="custom-btn" @click="viewReceipt(tenant.approvedID)">
+                                    <i class="bi bi-file-earmark-pdf"></i> View Receipt
+                                </button>
+                            </div>
+
+
 
                         </div>
                     </div>
@@ -103,7 +107,7 @@
                                 </li>
                             </ul>
                             <div class="text-center"
-                                v-if="getDaysStayed(tenant.moveInDate) >= 2 && tenant.status === 'active' ">
+                                v-if="getDaysStayed(tenant.moveInDate) >= 2 && tenant.status === 'active'">
                                 <!-- If not yet reviewed -->
                                 <div v-if="alreadyReviewed === tenant.has_rated">
                                     <h5 class="mb-3 text-primary fw-bold border-bottom pb-2">
@@ -179,12 +183,12 @@
                                     <strong>Days Remaining: </strong>
                                     <span class="text-success">
                                         {{ getRemainingLeaseDays(tenant.moveInDate,
-                                        tenant.moveOutDate) }}
+                                            tenant.moveOutDate) }}
                                     </span>
                                 </li>
 
                             </ul>
-                            <div v-if="tenant.extension_payment_status === 'done' "
+                            <div v-if="tenant.extension_payment_status === 'done'"
                                 class="alert alert-info text-center p-3 rounded shadow-sm">
                                 <p class="mb-0 fw-semibold">
                                     <i class="bi bi-info-circle-fill me-2"></i>
@@ -193,80 +197,91 @@
                                 </p>
                             </div>
 
-                            <div class="mt-2 mb-4 p-3 border rounded shadow-sm bg-light small"
+                            <div class="mt-2 mb-4 p-3 border rounded  shadow-sm bg-light small"
                                 v-if="tenant.notifyRent == 1">
                                 <h6 class="fw-bold text-primary text-center mb-3">
                                     💰 Please choose an option for the rent extension request
                                 </h6>
+                                <div class="d-flex justify-content-center gap-3">
+                                    <button class="btn btn-success btn-sm px-4"
+                                        @click="updateRentStatus(tenant, 'extend')">
+                                        ✅ Extend
+                                    </button>
 
+                                    <button class="btn btn-danger btn-sm px-4"
+                                        @click="updateRentStatus(tenant, 'not_extending')">
+                                        ❌ Not Extending
+                                    </button>
+                                </div>
                                 <!-- Extend Button -->
-                                <button class="btn btn-success btn-sm px-4" @click="updateRentStatus(tenant, 'extend')">
-                                    ✅ Extend
-                                </button>
-
-                                <!-- Not Extending Button -->
-                                <button class="btn btn-danger btn-sm px-4"
-                                    @click="updateRentStatus(tenant, 'not_extending')">
-                                    ❌ Not Extending
-                                </button>
-
                             </div>
-                            <div class="mt-2 mb-4 p-3 border rounded shadow-sm bg-light small"
-                                v-if="tenant.extension_decision === 'not_extending'">
-                                <h6 class="fw-bold text-primary text-center mb-3">
-                                    ❌ You have chosen not to extend your lease.
-                                </h6>
-                                <p class="text-muted">
-                                    Please be reminded that your lease will end on
-                                    <strong>{{ formatDate(tenant.moveOutDate) }}</strong>. Kindly coordinate with your
-                                    landlord for the move-out process.
-                                </p>
+                            <div v-if="tenant.status !== 'moved_out'">
+                                <div class="mt-2 mb-4 p-3 border rounded shadow-sm bg-light small"
+                                    v-if="tenant.extension_decision === 'not_extending'">
+                                    <h6 class="fw-bold text-primary text-center mb-3">
+                                        ❌ You have chosen not to extend your lease.
+                                    </h6>
+                                    <p class="text-muted">
+                                        Please be reminded that your lease will end on
+                                        <strong>{{ formatDate(tenant.moveOutDate) }}</strong>. Kindly coordinate with
+                                        your
+                                        landlord for the move-out process.
+                                    </p>
 
+                                </div>
+
+                                <div class="mt-2 mb-4 p-3 border rounded shadow-sm bg-light small"
+                                    v-if="tenant.extension_decision === 'extend'">
+                                    <h6 class="fw-bold text-primary text-center mb-3">
+                                        💰 Extension Payment Details
+                                    </h6>
+
+                                    <p>
+                                        <i class="bi bi-calendar-event text-secondary"></i>
+                                        <strong> Billing Period:</strong>
+                                        {{ formatDate(tenant.moveInDate) }} – {{ formatDate(tenant.moveOutDate) }}
+                                    </p>
+
+                                    <p>
+                                        <i class="bi bi-cash-coin text-success"></i>
+                                        <strong> Room Monthly Rate:</strong>
+                                        <span class="text-danger fw-bold">₱{{ tenant.room.price }}</span>
+                                    </p>
+
+                                    <p v-if="tenant.payments[0]?.status === 'Approved'">
+                                        <i class="bi bi-wallet2 text-info"></i>
+                                        <strong> Amount Paid:</strong>
+                                        <span class="text-success fw-bold">
+                                            ₱{{ Number(tenant.payments[0]?.amount || 0).toLocaleString('en-PH', {
+                                                minimumFractionDigits: 2
+                                            }) }}
+                                        </span>
+                                    </p>
+                                    <p v-if="tenant.paymentOption === 'online'">
+                                        Payment Status:
+                                        <span class="badge" :class="{
+                                            'bg-success': tenant.payments[0]?.status === 'approved',
+                                            'bg-warning text-dark': tenant.payments[0]?.status === 'pending',
+                                            'bg-danger': tenant.payments[0]?.status === 'rejected'
+                                        }">
+                                            {{ tenant.payments[0]?.status || 'No Payment' }}
+                                        </span>
+                                    </p>
+                                    <button class="custom-btn" type="button" @click="extendrentModal(tenant)"> Extend
+                                        Rent
+                                    </button>
+                                </div>
                             </div>
-                            <div class="mt-2 mb-4 p-3 border rounded shadow-sm bg-light small"
-                                v-if="tenant.extension_decision === 'extend'">
-                                <h6 class="fw-bold text-primary text-center mb-3">
-                                    💰 Extension Payment Details
-                                </h6>
 
-                                <p>
-                                    <i class="bi bi-calendar-event text-secondary"></i>
-                                    <strong> Billing Period:</strong>
-                                    {{ formatDate(tenant.moveInDate) }} – {{ formatDate(tenant.moveOutDate) }}
-                                </p>
-
-                                <p>
-                                    <i class="bi bi-cash-coin text-success"></i>
-                                    <strong> Room Monthly Rate:</strong>
-                                    <span class="text-danger fw-bold">₱{{ tenant.room.price }}</span>
-                                </p>
-
-                                <p v-if="tenant.payments[0]?.status === 'Approved'">
-                                    <i class="bi bi-wallet2 text-info"></i>
-                                    <strong> Amount Paid:</strong>
-                                    <span class="text-success fw-bold">
-                                        ₱{{ Number(tenant.payments[0]?.amount || 0).toLocaleString('en-PH', {
-                                        minimumFractionDigits: 2
-                                        }) }}
-                                    </span>
-                                </p>
-                                <p v-if="tenant.paymentOption === 'online'">
-                                    Payment Status:
-                                    <span class="badge" :class="{
-                                        'bg-success': tenant.payments[0]?.status === 'approved',
-                                        'bg-warning text-dark': tenant.payments[0]?.status === 'pending',
-                                        'bg-danger': tenant.payments[0]?.status === 'rejected'
-                                    }">
-                                        {{ tenant.payments[0]?.status || 'No Payment' }}
-                                    </span>
-                                </p>
-                                <button class="custom-btn" type="button" @click="extendrentModal(tenant)"> Extend
-                                    Rent
-                                </button>
+                            <div class="d-flex justify-content-center align-items-center mt-3"
+                                v-if="tenant.status === 'moved_out'">
+                                <div class="alert alert-secondary text-center shadow-sm px-4 py-3 rounded-3">
+                                    <i class="bi bi-door-closed me-2"></i>
+                                    <strong>This tenant has already moved out.</strong>
+                                </div>
                             </div>
-                            <div class="text-center mt-3">
 
-                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -309,7 +324,7 @@
                                     <div class="justify-content-center d-flex mt-2">
                                         <span v-if="errors.payment_option" class="text-danger small mt-1 d-block">
                                             <i class="bi bi-exclamation-circle-fill me-1"></i>{{
-                                            errors.payment_option[0] }}
+                                                errors.payment_option[0] }}
                                         </span>
                                     </div>
                                 </div>
@@ -364,7 +379,7 @@
                                 <div class="justify-content-center d-flex mb-2">
                                     <span v-if="errors.PaymentPictureFile" class="text-danger small mt-1 d-block">
                                         <i class="bi bi-exclamation-circle-fill me-1"></i>{{
-                                        errors.PaymentPictureFile[0]
+                                            errors.PaymentPictureFile[0]
                                         }}
                                     </span>
                                 </div>
@@ -696,7 +711,7 @@ export default {
             formdata.append('approveID', tenant.approvedID);
             formdata.append('amount', tenant.room?.price);
             formdata.append('paymentImage', this.PaymentPictureFile);
-            formdata.append('paymentOption',this.payment_option);
+            formdata.append('paymentOption', this.payment_option);
             try {
                 const response = await axios.post('/extend-rent', formdata,
                     {
@@ -789,7 +804,7 @@ export default {
                         'success'
                     );
                     this.roomsList();
-                    
+
                 } else {
                     this.$refs.toast.showToast('Something went wrong.', 'error');
                 }
@@ -802,8 +817,7 @@ export default {
                 this.$refs.loader.loading = false;
             }
         },
-        paymentOption(payment_option)
-        {
+        paymentOption(payment_option) {
             this.payment_option = payment_option;
         },
         formatDate(date) {
