@@ -1,4 +1,4 @@
-@include('landlord.partials.header')
+@include('tenant.accountprocess.partials.header')
 <header>
 <nav class="navbar navbar-expand-lg bg-body-tertiary  shadow-sm">
     <div class="container-fluid navigation-style">
