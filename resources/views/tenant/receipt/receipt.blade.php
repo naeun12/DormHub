@@ -111,16 +111,12 @@
         </div>
 
         <div class="options">
-            <input type="radio" style="background: transparent" checked> For {{ $tenant->source_type ?? 'N/A' }}
-
-            <input type="checkbox" style="background: transparent"
-                {{ strtolower($paymentType ?? '') == 'gcash' ? 'checked' : '' }}> Gcash
+            <input type="radio" style="background: transparent" checked> For {{$tenant->source}} 
             
         </div>
 
         <div class="row"><span class="label">ACCT.:</span> #{{ $tenant->approvedID }}</div>
         <div class="row"><span class="label">PAID:</span> PHP{{ number_format($totalPaid, 2) }}</div>
-        <div class="row"><span class="label">DUE:</span> PHP{{ number_format($balance, 2) }}</div>
 
 
         <div class="options">

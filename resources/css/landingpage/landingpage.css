@@ -1,3 +1,8 @@
+body {
+    width: 100%;
+    overflow-x: hidden;
+}
+
 .container-fluid {
     background-color: #fff;
 }
@@ -39,23 +44,84 @@ h1 {
     color: #333;
 }
 
-
-
-.btn {
+.btn-custom-tenant {
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
+    font-weight: 600;
     border-radius: 25px;
-    box-shadow: #777 0px 25px 20px -20px;
-    transition: transform 1s ease, box-shadow 0.3s ease;
-    background-color: #4edce2;
+    border: 2px solid transparent;
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+    background: green;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
 }
 
-.btn:hover {
+.btn-custom-tenant::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -75%;
+    width: 50%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: skewX(-25deg);
+    transition: left 0.5s ease;
+}
 
-    background-color: #093334;
-    color: white;
+.btn-custom-tenant:hover::before {
+    left: 125%;
+}
+
+.btn-custom-tenant:hover {
+    background: linear-gradient(135deg, #0ee5f5, #29c6d3);
+    /* lighter hover colors */
     transform: scale(1.1);
-    box-shadow: 0px 10px 15px -5px #555;
+    box-shadow: 0px 12px 20px rgba(0, 0, 0, 0.3);
+    color: #fff;
+}
+
+.btn-custom {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 25px;
+    border: 2px solid transparent;
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, #4edce2, #0ebfca);
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+}
+
+.btn-custom::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -75%;
+    width: 50%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: skewX(-25deg);
+    transition: left 0.5s ease;
+    text-decoration: none;
+}
+
+.btn-custom:hover::before {
+    left: 125%;
+}
+
+.btn-custom:hover {
+    background: linear-gradient(135deg, #093334, #056060);
+    transform: scale(1.1);
+    box-shadow: 0px 12px 20px rgba(0, 0, 0, 0.3);
+    color: #fff;
 }
 
 
@@ -110,29 +176,30 @@ h1 {
 .navbar-dark .navbar-toggler {
     border-color: rgba(255, 255, 255, 0.3);
 }
- .hover-card {
-     transition: transform 0.3s ease, box-shadow 0.3s ease;
- }
 
- .hover-card:hover {
-     transform: translateY(-8px);
-     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
- }
+.hover-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 
- .icon-wrapper {
-     width: 70px;
-     height: 70px;
-     background: #f1f5ff;
-     border-radius: 50%;
-     display: flex;
-     align-items: center;
-     justify-content: center;
-     font-size: 2rem;
-     margin: 0 auto;
- }
+.hover-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
 
- .text-gradient {
-     background: linear-gradient(45deg, #0d6efd, #6610f2);
-     -webkit-background-clip: text;
-     -webkit-text-fill-color: transparent;
- }
+.icon-wrapper {
+    width: 70px;
+    height: 70px;
+    background: #f1f5ff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin: 0 auto;
+}
+
+.text-gradient {
+    background: linear-gradient(45deg, #0d6efd, #6610f2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
