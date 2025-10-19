@@ -180,26 +180,24 @@ else if($paymentOption === 'onsite')
 
 }
 public function generateReceipt($id)
-    {
-$tenant = approvetenantsModel::with(['room.dorm','room.landlord', 'payments'])->findOrFail($id);
+{
+    $tenant = approvetenantsModel::with(['room.dorm','room.landlord', 'payments'])->findOrFail($id);
+
     $totalPaid = $tenant->payments->sum('amount');
-        $latestPayment = $tenant->payments->sortByDesc('created_at')->first();
+    $latestPayment = $tenant->payments->sortByDesc('created_at')->first();
 
+    $data = [
+        'tenant' => $tenant,
+        'balance' => $tenant->room->price - $totalPaid, // fixed
+        'totalPaid' => $totalPaid,
+        'paymentType' => $latestPayment ? $latestPayment->paymentType : null
+    ];
 
-        $data = [
-            'tenant' => $tenant,
-            'balance' => $tenant->room->price - ($tenant->amount ?? 0),
-             'totalPaid' => $totalPaid,
-             'paymentType'  => $latestPayment ? $latestPayment->paymentType : null
+    $pdf = PDF::loadView('tenant.receipt.receipt', $data);
 
-             
+    return $pdf->stream('receipt.pdf'); 
+}
 
-        ];
-
-        $pdf = PDF::loadView('tenant.receipt.receipt', $data);
-
-        return $pdf->stream('receipt.pdf'); 
-    }
   public function ReviewAndRating(Request $request)
 {
     $request->validate([

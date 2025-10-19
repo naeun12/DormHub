@@ -111,7 +111,10 @@
         </div>
 
         <div class="options">
-            <input type="radio" style="background: transparent" checked> For {{$tenant->source}} 
+            <input type="radio" style="background: transparent" checked> For {{ $tenant->source_type ?? 'N/A' }}
+
+            <input type="checkbox" style="background: transparent"
+                {{ strtolower($paymentType ?? '') == 'gcash' ? 'checked' : '' }}> Gcash
             
         </div>
 
