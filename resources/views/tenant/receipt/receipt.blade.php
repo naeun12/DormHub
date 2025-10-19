@@ -123,7 +123,7 @@
         <div class="options">
             <label>
                 <input type="checkbox" style="background: transparent"
-                    {{ strtolower($tenant->payments->paymentType) == 'gcash' ? 'checked' : '' }}> Gcash
+                   > Gcash
             </label>
          
            
