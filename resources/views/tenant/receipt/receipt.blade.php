@@ -10,6 +10,7 @@
             font-size: 14px;
             margin: 0;
             padding: 0;
+            color: #333;
         }
 
         .header {
@@ -22,7 +23,8 @@
         }
 
         .header .left {
-            font-size: 14px;
+            font-size: 13px;
+            line-height: 1.5;
         }
 
         .header .right {
@@ -32,12 +34,13 @@
 
         .receipt-title {
             font-weight: bold;
-            font-size: 18px;
+            font-size: 20px;
+            margin-bottom: 5px;
         }
 
         .receipt-body {
-            background-color: #f2d0c4;
-            padding: 20px;
+            background-color: #f9f9f9;
+            padding: 20px 30px;
         }
 
         .row {
@@ -47,26 +50,28 @@
         .label {
             font-weight: bold;
             display: inline-block;
-            width: 80px;
+            width: 120px;
         }
 
         .options {
-            margin-top: 10px;
+            margin: 15px 0;
         }
 
         .options label {
-            margin-right: 15px;
+            margin-right: 20px;
+            font-weight: bold;
         }
 
         .signature {
-            margin-top: 40px;
+            margin-top: 50px;
             text-align: right;
             font-style: italic;
+            font-weight: bold;
         }
 
         .verification {
-            margin-top: 30px;
-            padding: 10px;
+            margin-top: 40px;
+            padding: 12px;
             border: 2px dashed #3e4a61;
             background-color: #fff;
             font-weight: bold;
@@ -83,56 +88,52 @@
         <div class="left">
             <div><strong>{{ $tenant->room->dorm->dormName }}</strong></div>
             <div>Address: {{ $tenant->room->dorm->address }}</div>
-            <div>Mail: {{ $tenant->room->landlord->email }}</div>
+            <div>Email: {{ $tenant->room->landlord->email }}</div>
             <div>Phone: {{ $tenant->room->landlord->phoneNumber }}</div>
         </div>
         <div class="right">
             <div class="receipt-title">RECEIPT</div>
             <div>No. {{ str_pad($tenant->approvedID, 6, '0', STR_PAD_LEFT) }}</div>
+            <div>Date: {{ \Carbon\Carbon::now()->format('Y-m-d') }}</div>
         </div>
     </div>
 
     <!-- BODY -->
     <div class="receipt-body">
         <div class="row">
-            <span class="label">Date:</span> {{ \Carbon\Carbon::now()->format('Y-m-d') }}
+            <span class="label">Tenant Name:</span> {{ $tenant->firstname }} {{ $tenant->lastname }}
         </div>
         <div class="row">
-            <span class="label">From:</span> {{ $tenant->firstname }} {{ $tenant->lastname }}
+            <span class="label">Room #:</span> {{ $tenant->room->roomNumber }}
         </div>
         <div class="row">
-            <span class="label">Montlhy price</span> PHP {{ $tenant->room->price }}
+            <span class="label">Room Type:</span> {{ $tenant->room->roomType }}
         </div>
         <div class="row">
-            <span class="label">Room #</span> {{ $tenant->room->roomNumber }}
+            <span class="label">Monthly Rate:</span> PHP {{ number_format($tenant->room->price, 2) }}
         </div>
         <div class="row">
-            <span class="label">Room Type</span> {{ $tenant->room->roomType }}
+            <span class="label">Account #:</span> {{ $tenant->approvedID }}
         </div>
 
         <div class="options">
-            <input type="radio" style="background: transparent" checked> For {{$tenant->source_type}} 
-            
+            <input type="radio" checked> For {{ $tenant->source_type }}
         </div>
 
-        <div class="row"><span class="label">ACCT.:</span> #{{ $tenant->approvedID }}</div>
         <div class="row">
-            <span class="label">PAID:</span> PHP{{ $latestPayment->amount ?? 0 }}
+            <span class="label">Amount Paid:</span> PHP {{ number_format($latestPayment->amount ?? 0, 2) }}
         </div>
-
-        <div class="options">
+        <div class="row">
+            <span class="label">Payment Method:</span>
             <label>
-                <input type="checkbox" style="background: transparent"
-                   > Gcash
+                <input type="checkbox" {{ ($latestPayment && $latestPayment->paymentType == 'Gcash') ? 'checked' : '' }}> GCash
             </label>
-         
-           
         </div>
 
         <div class="signature">Authorized Signature</div>
 
         <div class="verification">
-            ✅ Tagged by Landlord for Verification
+            ✅ Verified & Tagged by Landlord
         </div>
     </div>
 
