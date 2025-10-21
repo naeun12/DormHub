@@ -96,13 +96,6 @@ export default {
             const formData = new FormData();
             formData.append('email', this.email);
             formData.append('password', this.password);
-            if (!this.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-                this.errors.email = ["Please enter a valid email."]
-                this.$refs.loader.loading = false
-                return
-            }
-
-
             try {
                 this.$refs.loader.loading = true;
 

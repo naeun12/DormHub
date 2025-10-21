@@ -540,16 +540,18 @@
                                 <select class="form-select" id="availability" style="border: 1px solid #4edce2;"
                                     v-model="editData.availability">
                                     <option value="" selected>Select Availability</option>
-                                    <option v-for="slot in editavailibilityArray" :key="slot" :value="slot">
-                                        {{ slot }}
-                                    </option>
+                                    <option value="Available">Available</option>
+                                    <option value="Under Maintenance">Under Maintenance</option>
+                                    <option value="Occupied">Occupied</option>
+                                    <option value="Reserved">Reserved</option>
+
                                 </select>
                                 <label for="availability">Availability Status</label>
                             </div>
                             <span class="text-danger small" v-if="errors.editData?.availability"> <i
                                     class="bi bi-exclamation-circle-fill"></i>{{
-                                errors.editData.availability[0]
-                                }}</span>
+                                        errors.editData.availability[0]
+                                    }}</span>
                         </div>
 
                         <!-- Column 2 -->

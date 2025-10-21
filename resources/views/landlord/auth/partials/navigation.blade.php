@@ -44,7 +44,7 @@
 
                     @forelse($notifications as $notif)
                         <li>
-                            <a href="#" class="dropdown-item d-flex align-items-start">
+                            <a href="{{ route('notifications.landlord', ['landlord_id' => session('landlord_id')]) }}" class="dropdown-item d-flex align-items-start">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#0d6efd"
                                     class="me-3 bi bi-bell-fill" viewBox="0 0 16 16">
                                     <path

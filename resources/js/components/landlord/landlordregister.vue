@@ -553,12 +553,12 @@ export default {
                     }
                 });
                 if (response.data.status === "success") {
-                    const message = Object.values(response.data.message).flat().join('\n');
-                    this.$refs.toast.showToast(message, 'success');
+                    this.$refs.toast.showToast(response.data.message, 'success');
                     this.$refs.loader.loading = false;
                     this.Emptyfill();
                     this.currentStep = 0;
                     this.errors = {};
+                    window.location.href = `/landlordLogin`;
                     return true;
                 }
             }
@@ -566,14 +566,12 @@ export default {
                 if (error.response) {
                     const response = error.response;
                     if (response.data.status === "error") {
-                        const message = Object.values(response.data.message).flat().join('\n');
-                        this.$refs.toast.showToast(message, 'danger');
+                        this.$refs.toast.showToast(response.data.message, 'danger');
                         this.$refs.loader.loading = false;
 
                     }
                 } else {
-                    const message = Object.values(response.data.message).flat().join('\n');
-                    this.$refs.toast.showToast(message, 'danger');
+                    this.$refs.toast.showToast(response.data.message, 'danger');
                     this.$refs.loader.loading = false;
 
                 }

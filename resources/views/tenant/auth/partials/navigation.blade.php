@@ -73,7 +73,7 @@
         <div class="d-flex flex-column" style="max-height: 300px; overflow-y: auto;">
             @forelse($notifications as $notif)
                 <li>
-                    <a href="#" class="dropdown-item d-flex align-items-start py-2">
+                    <a href="{{ route('view.notifications.tenant', ['tenant_id' => session('tenant_id')]) }}" class="dropdown-item d-flex align-items-start py-2">
                         <i class="bi bi-bell-fill text-primary me-2 mt-1"></i>
                         <div>
                             <div class="fw-semibold">{{ $notif->title }}</div>

@@ -564,6 +564,8 @@ export default {
                     this.showToast('Successfully Register', 'success');
                     this.errors = {};
                     this.fill();
+                    window.location.href = `/tenantLogin`;
+
                 }
 
             } catch (error) {

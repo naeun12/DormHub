@@ -605,6 +605,7 @@ export default {
                 if (response.data.status === 'success') {
                     this.$refs.toast.showToast(response.data.message, 'success');
                     this.reservationDetailsModal = false;
+                    window.location.href = `/view/reservation/${this.tenant_id}`;
                 } else if (response.data.status === 'error') {
                     this.$refs.toast.showToast(response.data.message, 'danger');
                     this.reservationDetailsModal = false;
