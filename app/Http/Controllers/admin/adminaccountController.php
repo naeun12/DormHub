@@ -13,22 +13,22 @@ class adminaccountController extends Controller
 {
 
 
-// public function createAdmin(Request $request)
-// {
+public function createAdmin(Request $request)
+{
    
 
-//     $admin = AdminModel::create([
-//         'name' => 'Lance Monsanto',
-//         'username' => 'admin',
-//         'password' => Hash::make('admin123'),
-//     ]);
+    $admin = AdminModel::create([
+        'name' => 'Lance Monsanto',
+        'username' => 'admin',
+        'password' => Hash::make('admin123'),
+    ]);
 
-//     return response()->json([
-//         'status' => 'success',
-//         'message' => 'Admin created successfully',
-//         'admin' => $admin
-//     ]);
-// }
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Admin created successfully',
+        'admin' => $admin
+    ]);
+}
 
      public function adminIndex()
     {
