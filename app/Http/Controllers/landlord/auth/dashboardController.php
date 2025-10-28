@@ -1,6 +1,8 @@
 <?php
 
+
 namespace App\Http\Controllers\landlord\auth;
+
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -11,12 +13,8 @@ use App\Models\tenant\approvetenantsModel;
 use App\Models\tenant\reservationModel;
 use App\Models\notificationModel;
 use Carbon\Carbon;
-
 use App\Models\landlord\dormModel;
 use Barryvdh\DomPDF\Facade\Pdf;
-
-
-
 class dashboardController extends Controller
 {
      public function landlordDashboard($landlord_id)
@@ -29,11 +27,11 @@ class dashboardController extends Controller
         if (!$sessionLandlordId) {
             return redirect()->route('loginLandlord')->with('error', 'Please log in as a landlord.');
         }
-    
+   
         if ($landlord_id !== $sessionLandlordId) {
             return redirect()->route('loginLandlord')->with('error', 'Unauthorized access.');
         }
-    
+   
         $landlord = landlordModel::find($landlord_id);
         if (!$landlord) {
             return redirect()->route('loginLandlord')->with('error', 'Landlord not found.');
@@ -41,7 +39,7 @@ class dashboardController extends Controller
         $unreadCount = notificationModel::where('receiverID', $landlord_id)
             ->where('isRead', false)
             ->count();
-    
+   
         return view ('landlord.auth.dashboard', ['title' => 'Landlord - Dashboard',
         'headerName' => 'Dashboard',
         'color' =>'primary'
@@ -56,12 +54,14 @@ public function getLandlord(Request $request, $landlord_id)
 $date = $dateParam ? \Carbon\Carbon::parse($dateParam) : \Carbon\Carbon::today();
     $landlord = landlordModel::find($landlord_id);
 
+
     if (!$landlord) {
         return response()->json([
             'status' => 'error',
             'message' => 'Landlord not found.'
         ], 404);
     }
+
 
     return response()->json([
         'status' => 'success',
@@ -71,15 +71,21 @@ $date = $dateParam ? \Carbon\Carbon::parse($dateParam) : \Carbon\Carbon::today()
 public function getTotalTenants(Request $request, $landlord_id)
 {
     $dateParam = $request->query('date');
+    $dormID = $request->query('dorm_id'); // optional dorm filter
     $date = $dateParam ? \Carbon\Carbon::parse($dateParam) : \Carbon\Carbon::today();
 
-    $totalTenants = approvetenantsModel::whereHas('room', function ($query) use ($landlord_id) {
+
+    $totalTenants = approvetenantsModel::whereHas('room', function ($query) use ($landlord_id, $dormID) {
         $query->where('fklandlordID', $landlord_id);
+        if ($dormID) {
+            $query->where('fkdormID', $dormID);
+        }
     })
     ->where('status','<>','moved_out')
     ->where('status','<>','pending')
     ->whereDate('created_at', '<=', $date)
     ->count();
+
 
     return response()->json([
         'status' => 'success',
@@ -89,19 +95,30 @@ public function getTotalTenants(Request $request, $landlord_id)
 public function availableBeds(Request $request, $landlord_id)
 {
     $dateParam = $request->query('date');
+    $dormID = $request->query('dorm_id'); // optional dorm filter
     $date = $dateParam ? \Carbon\Carbon::parse($dateParam) : \Carbon\Carbon::today();
-    
+   
     // If you want to filter by month instead of specific date
     $startOfMonth = $date->copy()->startOfMonth();
     $endOfMonth = $date->copy()->endOfMonth();
+
 
     // All rooms of the landlord marked as Available
     $roomsQuery = roomModel::where('fklandlordID', $landlord_id)
         ->where('availability', 'Available');
 
+
+    if ($dormID) {
+        $roomsQuery->where('fkdormID', $dormID);
+    }
+
+
     // Booked rooms during that month (overlapping with the month at all)
-    $bookedRoomIds = approvetenantsModel::whereHas('room', function ($query) use ($landlord_id) {
+    $bookedRoomIds = approvetenantsModel::whereHas('room', function ($query) use ($landlord_id, $dormID) {
         $query->where('fklandlordID', $landlord_id);
+        if ($dormID) {
+            $query->where('fkdormID', $dormID);
+        }
     })
     ->where(function($query) use ($startOfMonth, $endOfMonth) {
         $query->where(function($q) use ($startOfMonth, $endOfMonth) {
@@ -113,10 +130,12 @@ public function availableBeds(Request $request, $landlord_id)
     ->pluck('fkroomID')
     ->toArray();
 
+
     // Count available rooms not booked during that month
     $availableRoomsCount = $roomsQuery
         ->whereNotIn('roomID', $bookedRoomIds)
         ->count();
+
 
     return response()->json([
         'status' => 'success',
@@ -133,17 +152,23 @@ public function availableBeds(Request $request, $landlord_id)
 
 
 
+
 public function getReservationList(Request $request, $landlord_id)
 {
     $dateParam = $request->query('date');
+    $dormID = $request->query('dorm_id'); // optional dorm filter
 $date = $dateParam ? \Carbon\Carbon::parse($dateParam) : \Carbon\Carbon::today();
     $reservations = reservationModel::with(['room']) // eager load room data
-        ->whereHas('room', function ($query) use ($landlord_id) {
+        ->whereHas('room', function ($query) use ($landlord_id, $dormID) {
             $query->where('fklandlordID', $landlord_id);
+            if ($dormID) {
+                $query->where('fkdormID', $dormID);
+            }
         })
         ->whereDate('created_at', '<=', $date)
         ->orderBy('created_at', 'desc') // optional: show latest first
         ->get();
+
 
     return response()->json([
         'status' => 'success',
@@ -153,111 +178,122 @@ $date = $dateParam ? \Carbon\Carbon::parse($dateParam) : \Carbon\Carbon::today()
 public function getBookingList(Request $request, $landlord_id)
 {
     $dateParam = $request->query('date');
+    $dormID = $request->query('dorm_id'); // optional dorm filter
     $date = $dateParam ? \Carbon\Carbon::parse($dateParam) : \Carbon\Carbon::today();
 
+
     $bookings = bookingModel::with('room') // eager load room info
-        ->whereHas('room', function ($query) use ($landlord_id) {
+        ->whereHas('room', function ($query) use ($landlord_id, $dormID) {
             $query->where('fklandlordID', $landlord_id);
+            if ($dormID) {
+                $query->where('fkdormID', $dormID);
+            }
         })
         ->orderBy('created_at', 'desc')
         ->get();
+
 
     return response()->json([
         'status' => 'success',
         'bookings' => $bookings
     ]);
 }
-
-public function getDormProfits(Request $request, $landlord_id)
+public function getDormID($landlord_id)
 {
-    $dateParam = $request->query('date');
-    $date = $dateParam ? \Carbon\Carbon::parse($dateParam) : \Carbon\Carbon::today();
-
-    $dormProfits = dormModel::with(['rooms' => function ($query) use ($date) {
-        $query->where('availability', 'Occupied')
-              ->whereDate('created_at', '<=', $date);
-    }])
-    ->where('fklandlordID', $landlord_id)
-    ->get()
-    ->map(function ($dorm) {
-        $totalProfit = $dorm->rooms->sum('price');
-        return [
-            'dormName' => $dorm->dormName,
-            'profit' => $totalProfit,
-        ];
-    });
-
-    $dormProfitsCollection = collect($dormProfits);
-    $total = $dormProfitsCollection->sum('profit');
-
+    $dorms = dormModel::where('fklandlordID', $landlord_id)
+                      ->get(['dormID', 'dormName']);
     return response()->json([
         'status' => 'success',
-        'total_profit' => $total,
-        'data' => $dormProfits
+        'dorms' => $dorms
     ]);
 }
-public function getallprofits(Request $request, $landlord_id)
+
+
+public function getRoomProfits(Request $request, $landlord_id)
 {
     $dateParam = $request->query('date');
+    $dormID = $request->query('dorm_id'); // optional dorm filter
     $date = $dateParam ? \Carbon\Carbon::parse($dateParam) : \Carbon\Carbon::today();
 
-    // --- 1. Approved tenants payments ---
-    $approved = \App\Models\tenant\approvepaymentModel::with(['approvedTenant.room.dorm'])
-        ->whereHas('approvedTenant.room.dorm', fn($q) => $q->where('fklandlordID', $landlord_id))
-        ->whereDate('created_at', '<=', $date)
-        ->get()
-        ->groupBy(fn($p) => optional(optional(optional($p->approvedTenant)->room)->dorm)->dormName ?? 'Unknown Dorm')
-        ->map(fn($g) => [
-            'dormName' => optional(optional(optional($g->first()?->approvedTenant)->room)->dorm)->dormName ?? 'Unknown Dorm',
-            'totalProfit' => collect($g)->sum(fn($x) => (float) $x->amount) // ✅ wrap in collect()
-        ]);
 
-    // --- 2. Reservation payments ---
-    $reservations = \App\Models\tenant\reservationpaymentModel::with(['reservation.room.dorm'])
-        ->whereHas('reservation.room.dorm', fn($q) => $q->where('fklandlordID', $landlord_id))
-        ->whereDate('created_at', '<=', $date)
-        ->get()
-        ->groupBy(fn($p) => optional(optional(optional($p->reservation)->room)->dorm)->dormName ?? 'Unknown Dorm')
-        ->map(fn($g) => [
-            'dormName' => optional(optional(optional($g->first()?->reservation)->room)->dorm)->dormName ?? 'Unknown Dorm',
-            'totalProfit' => collect($g)->sum(fn($x) => (float) $x->amount) // ✅ wrap in collect()
-        ]);
+    $query = roomModel::where('fklandlordID', $landlord_id)
+        ->whereDate('created_at', '<=', $date);
 
-    // --- 3. Booking payments ---
-    $bookings = \App\Models\tenant\bookingpaymentModel::with(['booking.room.dorm'])
-        ->whereHas('booking.room.dorm', fn($q) => $q->where('fklandlordID', $landlord_id))
-        ->whereDate('created_at', '<=', $date)
-        ->get()
-        ->groupBy(fn($p) => optional(optional(optional($p->booking)->room)->dorm)->dormName ?? 'Unknown Dorm')
-        ->map(fn($g) => [
-            'dormName' => optional(optional(optional($g->first()?->booking)->room)->dorm)->dormName ?? 'Unknown Dorm',
-            'totalProfit' => collect($g)->sum(fn($x) => (float) $x->amount) // ✅ wrap in collect()
-        ]);
 
-    // --- Merge all results ---
-    $profits = collect()
-        ->merge($approved)
-        ->merge($reservations)
-        ->merge($bookings)
-        ->groupBy('dormName')
-        ->map(fn($groups, $dormName) => [
-            'dormName' => $dormName,
-            'totalProfit' => collect($groups)->sum('totalProfit') // ✅ wrap in collect()
-        ])
-        ->values()
-        ->toArray();
+    if ($dormID) {
+        $query->where('fkdormID', $dormID);
+    }
+    $rooms = $query->get();
+    // Group by roomNumber to avoid duplicates and sum their price
+    $roomsData = $rooms->groupBy('roomNumber')->map(function ($groupedRooms, $roomNumber) {
+        $totalPrice = $groupedRooms->where('availability', 'Occupied')->sum('price');
 
-    $totalProfit = collect($profits)->sum('totalProfit');
+
+        return [
+            'roomNumber' => $roomNumber,
+            'profit' => $totalPrice,
+            'availability' => $groupedRooms->first()->availability,
+            'dormName' => $groupedRooms->first()->dorm->dormName ?? 'N/A',
+            'created_at' => $groupedRooms->first()->created_at,
+        ];
+    })->sortByDesc('profit')->values();
+
+
+    $totalProfit = $roomsData->sum('profit');
+
 
     return response()->json([
         'status' => 'success',
         'total_profit' => $totalProfit,
-        'data' => $profits
+        'data' => $roomsData
     ]);
 }
+public function getGenderDistribution(Request $request, $landlord_id)
+{
+    $dateParam = $request->query('date');
+    $dormID = $request->query('dorm_id'); // optional dorm filter
+    $date = $dateParam ? \Carbon\Carbon::parse($dateParam) : \Carbon\Carbon::today();
+
+
+    // Get all approved tenants under landlord (and optionally filter by dorm)
+    $tenants = \App\Models\tenant\approvetenantsModel::with('room')
+        ->whereHas('room', function ($q) use ($landlord_id, $dormID) {
+            $q->where('fklandlordID', $landlord_id);
+            if ($dormID) {
+                $q->where('fkdormID', $dormID);
+            }
+        })
+        ->whereDate('moveInDate', '<=', $date)
+        ->get();
+
+
+    // Group by gender
+    $genderCounts = $tenants->groupBy('gender')
+        ->map(fn($g, $gender) => [
+            'gender' => $gender,
+            'count' => $g->count()
+        ])
+        ->values()
+        ->toArray();
+
+
+    $total = $tenants->count();
+
+
+    return response()->json([
+        'status' => 'success',
+        'total' => $total,
+        'data' => $genderCounts
+    ]);
+}
+
+
+
+
 public function generateFullReport($landlordID,Request $request)
 {
         $selectedDate = $request->query('date'); // gets ?date=YYYY-MM-DD
+
 
     // Fetch reservations with related dorm info and payment
     $reservations = reservationModel::with(['room.dorm','payment'])
@@ -267,10 +303,12 @@ public function generateFullReport($landlordID,Request $request)
         ->when($selectedDate, fn($q) => $q->whereDate('created_at', '<=', $selectedDate))
         ->get();
 
+
     // Add total amount per reservation
     $reservations->each(function($r) {
         $r->total_amount = $r->payment->sum('amount');
     });
+
 
     // Fetch bookings with related dorm info and payment
     $bookings = bookingModel::with(['room.dorm','payment'])
@@ -279,16 +317,20 @@ public function generateFullReport($landlordID,Request $request)
         ->whereHas('payment')
         ->when($selectedDate, fn($q) => $q->whereDate('created_at', '<=', $selectedDate))
 
+
         ->get();
+
 
     // Add total amount per booking
     $bookings->each(function($b) {
         $b->total_amount = $b->payment->sum('amount');
     });
 
+
     // Calculate total income from reservations + bookings
     $totalIncome = $reservations->sum('total_amount') + $bookings->sum('total_amount');
     $logoPath = public_path('images/Logo/logo.png');
+
 
     // Prepare report data array
     $reportData = [
@@ -300,13 +342,9 @@ public function generateFullReport($landlordID,Request $request)
         'logoPath'     => $logoPath,
     ];
 
+
     // Generate and stream PDF
     $pdf = PDF::loadView('landlord.reports.full-report', $reportData);
     return $pdf->stream("landlord-full-report-{$landlordID}.pdf");
 }
-
-
-
-
-
 }

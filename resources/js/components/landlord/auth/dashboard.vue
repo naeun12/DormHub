@@ -2,9 +2,13 @@
     <div class="main-content w-100">
 
 
+
+
         <div class="dashboard-content px-2 px-md-4 py-3">
             <NotificationList ref="toastRef" />
             <Loader ref="loader" />
+
+
 
 
             <!-- Header Card -->
@@ -15,25 +19,46 @@
                 </h3>
 
 
+
+
                 <!-- Date & Reports -->
                 <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center mb-3 gap-2">
                     <!-- Date -->
                     <div class="d-flex align-items-center gap-2 w-100 w-md-auto">
                         <label class="form-label fw-bold m-0">📅 Today's Date:</label>
-                        <input type="date" class="form-control w-100 w-md-auto"
-                            style="border: 1px solid #4edce2; min-width: 180px;" v-model="newDate" :max="today">
+                        <input type="date" class="form-control w-25 w-md-auto"
+                            style="border: 1px solid #4edce2; min-width: 50px;" v-model="newDate" :max="today">
                     </div>
 
 
+                    <div class="ms-md-auto mt-2 mt-md-0">
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button"
+                                id="reportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                {{ selectedDorm ? selectedDorm.dormName : 'Choose Dorm' }}
+                            </button>
+                            <ul class="dropdown-menu w-100" aria-labelledby="reportDropdown">
+                                <li v-for="dorm in dorms" :key="dorm.dormID">
+                                    <a class="dropdown-item" href="#" @click.prevent="selectDorm(dorm)">
+                                        {{ dorm.dormName }}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+
+                    </div>
                     <!-- Download Report -->
                     <div class="ms-md-auto mt-2 mt-md-0">
                         <a :href="`/generate-full-report/${landlord_id}?date=${newDate}`" target="_blank"
-                            class="btn btn-outline-success btn-lg" :class="{ 'disabled': !newDate }">
+                            class="btn btn-outline-success w-100" :class="{ 'disabled': !newDate }">
                             📄 Download Full Report
                         </a>
                     </div>
                 </div>
             </div>
+
+
 
 
             <!-- Info Cards -->
@@ -54,6 +79,8 @@
                 </div>
 
 
+
+
                 <!-- Vacant Beds -->
                 <div class="col-12 col-md-6 mb-3">
                     <a :href="`/landlordRoomManagement/${landlord_id}`" class="text-decoration-none">
@@ -71,19 +98,23 @@
             </div>
 
 
+
+
             <!-- Charts -->
-            <div class="charts d-flex flex-wrap gap-3 justify-content-between mb-4 flex-md-1-1-45">
-                <div class="chart-container p-3 border rounded shadow-sm"
-                    style="flex: 1 1 100%; max-width: 100%; min-width: 250px;">
-                    <h6 class="fw-bold mb-2">📈 Highest Dorm Profits</h6>
-                    <p class="fs-6 text-success mb-3">₱{{ totalDormProfit }}</p>
+            <div class="charts d-flex flex-wrap gap-3 mb-4">
+                <!-- Highest Dorm Profits -->
+                <div class="chart-container p-3 border rounded shadow-sm flex-grow-1"
+                    style="flex: 1 1 45%; min-width: 250px;">
+                    <h6 class="fw-bold mb-2">📈 Highest Rooms Profits</h6>
+                    <p class="fs-6 text-success mb-3">₱{{ totalRoomProfit }}</p>
                     <LineChart v-if="chartData" :chart-data="chartData" :chart-options="chartOptions" />
                 </div>
 
 
-                <div class="chart-container p-3 border rounded shadow-sm flex-md-1-1-45"
-                    style="flex: 1 1 100%; max-width: 100%; min-width: 250px;">
-                    <h6 class="fw-bold mb-2"><i class="bi bi-cash-stack me-2"></i> Profits Per Dorm</h6>
+                <!-- Profits Per Dorm -->
+                <div class="chart-container p-3 border rounded shadow-sm flex-grow-1"
+                    style="flex: 1 1 45%; min-width: 250px;">
+                    <h6 class="fw-bold mb-2"><i class="bi bi-person-lines-fill me-2"></i> Occupants by Gender</h6>
                     <DoughnutChart v-if="bookingChartData" :chart-data="bookingChartData"
                         :chart-options="bookingChartOptions" />
 
@@ -104,6 +135,10 @@
                     </div>
                 </div>
             </div>
+
+
+
+
 
 
             <!-- Recent Bookings & Reservations -->
@@ -140,6 +175,8 @@
                 </div>
 
 
+
+
                 <div class="col-12 col-md-6 mb-3">
                     <a :href="`/reservation-index/${landlord_id}`" class="text-decoration-none">
                         <div class="card shadow-sm border-start border-warning border-4 h-100">
@@ -170,6 +207,8 @@
             </div>
 
 
+
+
         </div>
     </div>
 </template>
@@ -180,6 +219,10 @@ import DoughnutChart from './chart/DoughnuChart.vue';
 import Loader from '@/components/loader.vue';
 import NotificationList from '@/components/notifications.vue';
 import { Title } from 'chart.js';
+import { get } from 'lodash';
+
+
+
 
 
 
@@ -191,6 +234,7 @@ export default
             Loader,
             NotificationList
 
+
         },
         data() {
             return {
@@ -201,12 +245,14 @@ export default
                 reservations: [],
                 notifications: [],
                 rooms: [],
+                dorms: [],
+                selectedDorm: null,
                 bookings: [],
                 newDate: '',
                 today: '',
                 totalTenants: 0,
                 availableBeds: 0,
-                totalDormProfit: 0,
+                totalRoomProfit: 0,
                 chartData: null,
                 chartOptions: {
                     responsive: true,
@@ -230,6 +276,7 @@ export default
             }
         },
 
+
         mounted() {
             const element = document.getElementById('dashboard');
             this.landlord_id = element.dataset.landlordId;
@@ -239,12 +286,14 @@ export default
             this.newDate = this.today; // default value to today
             this.getLandlord();
 
+
         },
         methods:
         {
             subscribeToNotifications() {
                 if (this.hasSubscribed) return; // prevent multiple subscriptions
                 this.hasSubscribed = true;
+
 
                 this.receiverID = this.landlord_id;
                 Echo.private(`notifications.${this.receiverID}`)
@@ -264,17 +313,21 @@ export default
                 try {
                     this.$refs.loader.loading = true;
 
+
                     const response = await axios.get(`/get/landlord/${this.landlord_id}`);
+
 
                     this.landlord = response.data.landlord;
                     await Promise.all([
                         this.getTotalTenants(),
                         this.getAvailableBeds(),
-                        this.getTenantsList(),
+                        this.getReservationList(),
                         this.getBookingList(),
-                        this.getDormProfits(),
-                        this.getAllprofits()
+                        this.getRoomProfits(),
+                        this.getGenderDistribution(),
+                        this.getDormID()
                     ]);
+
 
                 }
                 catch (error) {
@@ -283,62 +336,100 @@ export default
                 finally {
                     this.$refs.loader.loading = false;
 
+
                 }
 
+
             },
-            async getTotalTenants() {
+            selectDorm(dorm) {
+                this.selectedDorm = dorm;
+                // Call your function to fetch room profits for this dorm
+                this.getRoomProfits(dorm.dormID);
+                this.getGenderDistribution(dorm.dormID);
+                this.getTotalTenants(dorm.dormID);
+                this.getAvailableBeds(dorm.dormID);
+                this.getReservationList(dorm.dormID);
+                this.getBookingList(dorm.dormID);
+            },
+            async getTotalTenants(dorm_id = null) {
                 try {
-                    const response = await axios.get(`/get/total-tenants/${this.landlord_id}`, {
-                        params: { date: this.newDate }
-                    });
+                    // Build params object
+                    const params = { date: this.newDate };
+                    if (dorm_id) {
+                        params.dorm_id = dorm_id;
+                    }
+
+
+                    const response = await axios.get(`/get/total-tenants/${this.landlord_id}`, { params });
                     this.totalTenants = response.data.total_tenants;
                 } catch (error) {
                     console.error('Failed to fetch total tenants:', error);
+                    this.totalTenants = 0;
                 }
             },
-            async getAvailableBeds() {
+
+
+            async getAvailableBeds(dorm_id = null) {
                 try {
-                    const response = await axios.get(`/get/available-beds/${this.landlord_id}`, {
-                        params: { date: this.newDate }
-                    });
+                    // Build params object
+                    const params = { date: this.newDate };
+                    if (dorm_id) {
+                        params.dorm_id = dorm_id;
+                    }
+
+
+                    const response = await axios.get(`/get/available-beds/${this.landlord_id}`, { params });
                     this.availableBeds = response.data.available_beds;
                 } catch (error) {
                     console.error('Failed to fetch available beds:', error);
                 }
             },
-            async getTenantsList() {
+            async getReservationList(dorm_id = null) {
                 try {
                     const response = await axios.get(`/get/reservation-list/${this.landlord_id}`, {
-                        params: { date: this.newDate }
+                        params: { date: this.newDate, dorm_id }
                     });
                     this.reservations = response.data.reservations;
                 } catch (error) {
                     console.error('Failed to fetch tenant list:', error);
                 }
             },
-            async getBookingList() {
+            async getBookingList(dorm_id = null) {
                 try {
                     const response = await axios.get(`/get/booking-list/${this.landlord_id}`, {
-                        params: { date: this.newDate }
+                        params: { date: this.newDate, dorm_id }
                     });
                     this.bookings = response.data.bookings;
                 } catch (error) {
                     console.error('Failed to fetch booking list:', error);
                 }
             },
-            async getDormProfits() {
+            async getDormID() {
                 try {
-                    const response = await axios.get(`/get/dorm-profits/${this.landlord_id}`, {
-                        params: { date: this.newDate }
-                    });
-                    const dorms = response.data.data;
+                    const response = await axios.get(`/get/dorm-id/${this.landlord_id}`);
+                    this.dorms = response.data.dorms;
+                } catch (error) {
+                    console.error('Failed to fetch dorm IDs:', error);
+                }
+            },
+
+
+            async getRoomProfits(dorm_id = null) {
+                try {
+                    const params = { date: this.newDate };
+                    if (dorm_id) params.dorm_id = dorm_id;
+
+
+                    const response = await axios.get(`/get/room-profits/${this.landlord_id}`, { params });
+                    const rooms = response.data.data;
+
 
                     this.chartData = {
-                        labels: dorms.map(d => d.dormName),
+                        labels: rooms.map(r => r.roomNumber), // ← roomNumber, dili roomName
                         datasets: [
                             {
-                                label: 'Dorm Profits',
-                                data: dorms.map(d => d.profit),
+                                label: 'Room Profits',
+                                data: rooms.map(r => r.profit), // ← profit field
                                 borderColor: '#2196f3',
                                 tension: 0.4,
                                 fill: false
@@ -346,55 +437,56 @@ export default
                         ]
                     };
 
-                    this.totalDormProfit = response.data.total_profit; // ← set this
 
+                    this.totalRoomProfit = response.data.total_profit;
                 } catch (error) {
-                    console.error('Error fetching dorm profits:', error);
+                    console.error('Error fetching room profits:', error);
                 }
             },
-            async getAllprofits() {
-                // Optional: show loading state
+            async getGenderDistribution(dorm_id = null) {
                 try {
                     this.$refs.loader.loading = true;
 
-                    const response = await axios.get(`/get/all-profits/${this.landlord_id}`, {
-                        params: { date: this.newDate }
+
+                    const response = await axios.get(`/get/gender-distribution/${this.landlord_id}`, {
+                        params: {
+                            date: this.newDate,
+                            dorm_id: dorm_id
+                        }
                     });
 
-                    // ✅ Safe guard — make sure we always have an array
-                    const bookings = Array.isArray(response.data?.data) ? response.data.data : [];
 
-                    if (bookings.length === 0) {
-                        // Fallback data to show an empty chart
+                    const genders = Array.isArray(response.data?.data) ? response.data.data : [];
+
+
+                    if (genders.length === 0) {
                         this.bookingChartData = {
                             labels: ["No Data"],
                             datasets: [
                                 {
-                                    label: "Profits",
-                                    data: [1], // a dummy value so the chart renders
+                                    label: "Gender Distribution",
+                                    data: [1],
                                     backgroundColor: ["#e0e0e0"],
                                     hoverOffset: 4
                                 }
                             ]
                         };
-                        this.totalDormProfit = 0;
                         return;
                     }
 
 
-                    const labels = bookings.map(item => item.dormName ?? "Unknown Dorm");
-                    const data = bookings.map(item => Number(item.totalProfit) || 0);
+                    const labels = genders.map(item => item.gender || "Unknown");
+                    const data = genders.map(item => item.count || 0);
 
-                    const backgroundColors = [
-                        "#2196f3", "#9c27b0", "#ff9800", "#4caf50", "#e91e63", "#00bcd4",
-                        "#795548", "#607d8b", "#ffc107", "#8bc34a"
-                    ];
+
+                    const backgroundColors = ["#2196f3", "#e91e63", "#ff9800", "#4caf50", "#9c27b0"];
+
 
                     this.bookingChartData = {
                         labels,
                         datasets: [
                             {
-                                label: "Profits",
+                                label: "Gender Distribution",
                                 data,
                                 backgroundColor: backgroundColors.slice(0, data.length),
                                 hoverOffset: 4
@@ -402,19 +494,15 @@ export default
                         ]
                     };
 
-                    // ✅ Always calculate safely
-                    this.totalDormProfit = data.reduce((acc, val) => acc + val, 0);
 
                 } catch (error) {
-                    console.error("❌ Failed to fetch booking profits:", error);
-                    // Reset state on error
+                    console.error("❌ Failed to fetch gender distribution:", error);
                     this.bookingChartData = { labels: [], datasets: [] };
-                    this.data = 0;
                 } finally {
-                    // Optional: hide loading state
                     this.$refs.loader.loading = false;
                 }
             },
+
 
             calculatePercentage(value, dataArray) {
                 const total = dataArray.reduce((sum, val) => sum + val, 0);
@@ -435,6 +523,8 @@ export default
             }
 
 
+
+
         },
         watch: {
             newDate(newVal) {
@@ -448,7 +538,7 @@ export default
                 }
             }
         }
-
     }
+
 
 </script>

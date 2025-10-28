@@ -107,8 +107,9 @@ Route::middleware([LandlordAuth::class])->group(function () {
     Route::get('/get/available-beds/{landlord_id}', [dashboardController::class, 'availableBeds']);
     Route::get('/get/reservation-list/{landlord_id}', [dashboardController::class, 'getReservationList']);
     Route::get('/get/booking-list/{landlord_id}', [dashboardController::class, 'getBookingList']);
-    Route::get('/get/dorm-profits/{landlord_id}', [dashboardController::class, 'getDormProfits']);
-    Route::get('/get/all-profits/{landlord_id}', [dashboardController::class, 'getallprofits']);
+    Route::get('/get/dorm-id/{landlord_id}', [dashboardController::class, 'getDormID']);
+    Route::get('/get/room-profits/{landlord_id}', [dashboardController::class, 'getroomProfits']);
+    Route::get('/get/gender-distribution/{landlord_id}', [dashboardController::class, 'getgenderDistribution']);
     Route::get('/generate-full-report/{landlordID}', [dashboardController::class, 'generateFullReport']);
 
 
