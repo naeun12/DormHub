@@ -871,8 +871,7 @@ public function softDelete(Request $request, $id)
             'error'   => $e->getMessage()
         ], 500);
 }
-}
-public function generateActiveTenantReport(Request $request)
+}public function generateActiveTenantReport(Request $request)
 {
     $landlordId = session('landlord_id');
     if (!$landlordId) {
@@ -882,22 +881,29 @@ public function generateActiveTenantReport(Request $request)
         ], 403);
     }
 
+
     $logoPath = public_path('images/Logo/logo.png');
     $date = $request->query('date'); // optional date filter YYYY-MM-DD
 
-    $tenants = approvetenantsModel::with('room.dorm')
-        ->whereHas('room', function ($query) use ($landlordId) {
-            $query->where('fklandlordID', $landlordId);
-        })
-        ->where('status', 'active')
-        ->where('isDeleted', false)
-        ->when($date, function ($query, $date) {
-            $query->whereDate('moveInDate', $date); // filter by move-in date
-        })
-        ->orderBy('moveInDate', 'desc')
-        ->get();
+
+   $tenants = approvetenantsModel::with('room.dorm')
+    ->whereHas('room', function ($query) use ($landlordId) {
+        $query->where('fklandlordID', $landlordId);
+    })
+    ->where('status', 'active')
+    ->where('isDeleted', false)
+    ->when(!empty($date), function ($query) use ($date) {
+        $query->whereYear('moveInDate', date('Y', strtotime($date)))
+              ->whereMonth('moveInDate', date('m', strtotime($date)));
+    })
+    ->orderBy('moveInDate', 'desc')
+    ->get();
+
+
+
 
     $totalTenants = $tenants->count();
+
 
     $pdf = Pdf::loadView('landlord.reports.active-tenant-report', [
         'tenants' => $tenants,
@@ -905,6 +911,7 @@ public function generateActiveTenantReport(Request $request)
         'totalTenants' => $totalTenants,
         'selectedDate' => $date
     ]);
+
 
     return $pdf->stream("landlord.reports.active-tenant-report-{$landlordId}.pdf");
 }
@@ -918,36 +925,31 @@ public function generateExtensionPaymentReport(Request $request)
         ], 403);
     }
 
+
     $logoPath = public_path('images/Logo/logo.png');
 
-    // Get date from query (optional)
-    $date = $request->query('date');
-if ($date) {
-    $tenantsWithExtensions = approvetenantsModel::with(['room.dorm', 'payments' => function($q) use ($date) {
-        $q->whereDate('created_at', $date);
-    }])
-    ->whereHas('room', fn($q) => $q->where('fklandlordID', $landlordId))
-    ->where('extension_payment_status', 'done')
-    ->where('isDeleted', false)
-    ->whereHas('payments', fn($q) => $q->whereDate('created_at', $date))
-    ->orderBy('created_at', 'desc')
-    ->get();
-} else {
-    $tenantsWithExtensions = approvetenantsModel::with('room.dorm', 'payments')
+
+    $date = $request->query('date'); // optional date
+
+
+    $tenantsWithExtensions = approvetenantsModel::with(['room.dorm', 'payments'])
         ->whereHas('room', fn($q) => $q->where('fklandlordID', $landlordId))
         ->where('extension_payment_status', 'done')
         ->where('isDeleted', false)
+        ->when($date, function ($query) use ($date) {
+            // Filter by month and year
+            $query->whereHas('payments', fn($q) => $q->whereYear('created_at', date('Y', strtotime($date)))
+            ->whereMonth('created_at', date('m', strtotime($date))));
+        })
         ->orderBy('created_at', 'desc')
         ->get();
-}
-
 
 
     // Calculate total extension payments
     $totalIncome = $tenantsWithExtensions->sum(function($tenant) {
-        $payment = $tenant->payments->first();
-        return $payment->amount ?? 0;
+        return $tenant->payments->sum('amount');
     });
+
 
     $pdf = Pdf::loadView('landlord.reports.extension-payment-report', [
         'tenants' => $tenantsWithExtensions,
@@ -955,7 +957,7 @@ if ($date) {
         'totalIncome' => $totalIncome
     ]);
 
+
     return $pdf->stream("landlord-extension-payment-report-{$landlordId}.pdf");
 }
-
 }

@@ -119,5 +119,14 @@ $landlord_id = session('landlord_id');
 
 }
 
+public function getLandlordData(Request $request,$landlord_id)
+{
+    $landlord = landlordModel::find($landlord_id);
 
+
+    if (!$landlord) {
+        return response()->json(['error' => 'Landlord not found'], 404);
+    }
+    return response()->json(['landlord' => $landlord]);
+}
 }

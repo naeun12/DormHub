@@ -106,7 +106,6 @@
                 <div class="chart-container p-3 border rounded shadow-sm flex-grow-1"
                     style="flex: 1 1 45%; min-width: 250px;">
                     <h6 class="fw-bold mb-2">📈 Highest Rooms Profits</h6>
-                    <p class="fs-6 text-success mb-3">₱{{ totalRoomProfit }}</p>
                     <LineChart v-if="chartData" :chart-data="chartData" :chart-options="chartOptions" />
                 </div>
 

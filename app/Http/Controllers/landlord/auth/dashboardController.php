@@ -289,62 +289,71 @@ public function getGenderDistribution(Request $request, $landlord_id)
 
 
 
-
-public function generateFullReport($landlordID,Request $request)
+public function generateFullReport($landlordID, Request $request)
 {
-        $selectedDate = $request->query('date'); // gets ?date=YYYY-MM-DD
+    $selectedDate = $request->query('date');
 
 
-    // Fetch reservations with related dorm info and payment
     $reservations = reservationModel::with(['room.dorm','payment'])
         ->where('status', 'approved')
-        ->whereHas('room', fn($query) => $query->where('fklandlordID', $landlordID))
-        ->whereHas('payment')
+        ->whereHas('room', fn($q) => $q->where('fklandlordID', $landlordID))
         ->when($selectedDate, fn($q) => $q->whereDate('created_at', '<=', $selectedDate))
         ->get();
 
 
-    // Add total amount per reservation
-    $reservations->each(function($r) {
-        $r->total_amount = $r->payment->sum('amount');
-    });
-
-
-    // Fetch bookings with related dorm info and payment
     $bookings = bookingModel::with(['room.dorm','payment'])
         ->where('status', 'approved')
-        ->whereHas('room', fn($query) => $query->where('fklandlordID', $landlordID))
-        ->whereHas('payment')
+        ->whereHas('room', fn($q) => $q->where('fklandlordID', $landlordID))
         ->when($selectedDate, fn($q) => $q->whereDate('created_at', '<=', $selectedDate))
-
-
         ->get();
 
 
-    // Add total amount per booking
-    $bookings->each(function($b) {
-        $b->total_amount = $b->payment->sum('amount');
-    });
+    // Calculate total_amount per reservation/booking
+    $bookings->each(fn($b) => $b->total_amount = $b->payment->sum('amount'));
+    $reservations->each(function($r) {
+    // Get only the latest approved payment
+    $latestPayment = $r->payment()
+        ->orderByDesc('created_at')
+        ->first();
 
 
-    // Calculate total income from reservations + bookings
-    $totalIncome = $reservations->sum('total_amount') + $bookings->sum('total_amount');
+    $r->total_amount = $latestPayment->amount ?? 0; // fallback to 0 if none
+});
+
+
+    // Calculate combined income without double-counting payments
+    $allPayments = $reservations->flatMap(fn($r) => $r->payment)
+                    ->merge($bookings->flatMap(fn($b) => $b->payment))
+                    ->unique('id');
+
+
+    $totalIncome = $allPayments->sum('amount');
+
+
     $logoPath = public_path('images/Logo/logo.png');
 
 
-    // Prepare report data array
     $reportData = [
         'reservations' => $reservations,
         'bookings'     => $bookings,
         'totalIncome'  => $totalIncome,
         'landlordID'   => $landlordID,
-'reportDate' => Carbon::now('Asia/Manila')->format('F d, Y h:i A'),
+        'reportDate'   => Carbon::now('Asia/Manila')->format('F d, Y h:i A'),
         'logoPath'     => $logoPath,
     ];
-
-
-    // Generate and stream PDF
     $pdf = PDF::loadView('landlord.reports.full-report', $reportData);
     return $pdf->stream("landlord-full-report-{$landlordID}.pdf");
 }
 }
+
+
+
+
+
+
+
+
+
+
+
+

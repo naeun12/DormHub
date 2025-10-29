@@ -210,6 +210,7 @@ Route::middleware([LandlordAuth::class])->group(function () {
     Route::post('/landlord/verify-payment', [paymentlandlordController::class, 'verifyPaymentLandlord'])->name('verify.payment.landlord');
     Route::get('/landlord/payment-success', [paymentlandlordController::class, 'paymentSuccess']);
     Route::get('/landlord/payment-cancel', [paymentlandlordController::class, 'paymentCancel']);
+    Route::get('/get/landlord/data/{landlord_id}', [paymentlandlordController::class, 'getLandlordData']);
     //functions for landlord account update 
     Route::get('/landlord/account/update/{landlordId}', [landlordupdateAccountController::class, 'updateAccountIndex'])->name('landlord.account.update');
     Route::get('/get/landlord/data/{id}', [landlordupdateAccountController::class, 'getlandlordData']);
