@@ -9,8 +9,7 @@
             <div class="card-body">
                 <h1 class="text-center mb-2 mt-3 fw-bold text-primary">👋 Hello Admin</h1>
                 <p class="text-center mb-4 text-muted fs-6">
-                    Welcome back, Admin! Please log in to continue managing your properties.
-                </p>
+                    Hi Admin! Continue managing the platform, including tenants and landlord accounts. </p>
             </div>
 
 
