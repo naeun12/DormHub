@@ -29,7 +29,7 @@ class tenantEmailOtp extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Tenant Email Otp',
+            subject: 'Email Otp',
         );
     }
 

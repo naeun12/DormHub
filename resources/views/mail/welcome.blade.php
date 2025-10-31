@@ -87,7 +87,7 @@
             <p>&copy; 2025 DormHub. All rights reserved.</p>
             <p>
                 If you have any questions, feel free to contact us at
-                <a href="mailto:support@dormhub.com">support@dormhub.com</a>.
+                <a href="mailto:niiinaeun@gmail.com">niiinaeun@gmail.com</a>.
             </p>
         </div>
     </div>

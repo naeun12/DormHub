@@ -32,39 +32,203 @@ class dormitories extends Controller
         if (!$sessionTenant_id) {
             return redirect()->route('tenant-login')->with('error', 'Please log in as a landlord.');
         }
-    
+   
         if ($tenant_id !== $sessionTenant_id) {
             return redirect()->route('tenant-login')->with('error', 'Unauthorized access.');
         }
-    
+   
         $tenant = tenantModel::find($tenant_id);
         if (!$tenant) {
             return redirect()->route('tenant-login')->with('error', 'Landlord not found.');
         }
         return view('tenant.auth.dormitories',['title' => 'Dormitories  - Dormhub',
-        'tenant_id',$tenant,'cssPath' => asset('css/tenantpage/auth/dormitorymap.css')
+        'tenant_id',$tenant,'cssPath' => asset('css/tenantpage/auth/dormitory.css')
         ,'notifications' => $notifications,
              'unread_count' => $unreadCount,
     ]);
 
+
     }
     public function Listdorms()
     {
-        $dorms = dormModel::with(['amenities','images'])->get();
+        $dorms = dormModel::with(['amenities','images'])->paginate(10);
+        $count = $dorms->total();
+         $lapulapuCount = dormModel::where('address', 'like', '%Lapu-Lapu%')->count();
+        $mandaueCount = dormModel::where('address', 'like', '%Mandaue%')->count();
         return response()->Json([
             'status' => 'success',
             'dorms' => $dorms,
+            'total_dorms' => $count,
+            'lapulapu_dorms' => $lapulapuCount,
+            'mandaue_dorms' => $mandaueCount
         ]);
     }
+    public function selectedCityDorms(Request $request)
+{
+    $city = $request->input('city'); // from Vue buttons
+
+
+    $dorms = dormModel::with(['amenities','images'])
+        ->when($city && $city !== 'All', function($query) use ($city) {
+            $query->where(function($q) use ($city) {
+                $q->where('address', 'like', '%' . $city . '%')
+                  ->orWhere('address', 'like', '%' . $this->mapCityAlias($city) . '%');
+                // You can add more columns if needed
+            });
+        })
+        ->paginate(10);
+
+
+    return response()->json([
+        'status' => 'success',
+        'total_dorms' => $dorms->count(),
+        'dorms' => $dorms,
+    ]);
+}
+
+
+// Optional helper to handle common city aliases
+private function mapCityAlias($city)
+{
+    $aliases = [
+        'Lapu-Lapu' => 'Lapu-Lapu City',
+        'Mandaue' => 'Mandaue City',
+        'Cebu' => 'Cebu City'
+    ];
+
+
+    return $aliases[$city] ?? $city;
+}
+public function fetchAmenities()
+{
+    $amenities = DB::table('amenities')->get();
+
+
+    return response()->json([
+        'status' => 'success',
+        'amenities' => $amenities,
+    ]);
+}
+public function getAmenities(Request $request)
+{
+    $amenities = $request->input('amenities', []); // array of amenity IDs
+
+
+    $dormsQuery = dormModel::with(['amenities', 'images']);
+
+
+    if (!empty($amenities)) {
+        $dormsQuery->whereHas('amenities', function($q) use ($amenities) {
+            $q->whereIn('amenities.id', $amenities); // <-- fixed table name here
+        }, '=', count($amenities)); // ensures dorm has all selected amenities
+    }
+
+
+    $dorms = $dormsQuery->paginate(10);
+
+
+    return response()->json([
+        'status' => 'success',
+        'dorms' => $dorms,
+    ]);
+}
+public function getRate(Request $request)
+{
+    $rate = $request->input('rating');
+
+
+    $dormsQuery = dormModel::with(['images', 'reviews']);
+
+
+    if ($rate !== null && is_numeric($rate)) {
+        $dormsQuery->whereHas('reviews', fn($q) => $q->where('rating', '>=', $rate));
+    }
+
+
+    $dorms = $dormsQuery->paginate(10)->through(function($dorm) {
+    $avgRating = $dorm->reviews->avg('rating') ?? 0;
+    $dorm->rating_percentage = round(($avgRating / 5) * 100, 2);
+
+
+    unset($dorm->reviews);
+
+
+    return $dorm;
+});
+    return response()->json([
+        'status' => 'success',
+        'dorms' => $dorms,
+    ]);
+}
+
+
+
+
+public function getSortByDate(Request $request)
+{
+    $sortBy = $request->input('sortBy'); // from frontend
+
+
+    $dormsQuery = dormModel::with('images');
+
+
+    if ($sortBy === 'new-old') {
+        $dormsQuery->orderBy('updated_at', 'desc');
+    } elseif ($sortBy === 'old-new') {
+        $dormsQuery->orderBy('updated_at', 'asc');
+    }
+
+
+    $dorms = $dormsQuery->paginate(10);
+
+
+    return response()->json([
+        'status' => 'success',
+        'total_dorms' => $dorms->count(),
+        'dorms' => $dorms,
+    ]);
+}
+public function getAvailability(Request $request)
+{
+    $availability = $request->input('availability');
+   
+    $dormsQuery = dormModel::with(['rooms', 'images']);
+
+
+    if ($availability && $availability !== 'all') {
+        $dormsQuery->whereHas('rooms', function($q) use ($availability) {
+            $q->whereRaw('LOWER(availability) = ?', [strtolower($availability)]);
+        });
+    }
+
+
+    $dorms = $dormsQuery->paginate(10);
+
+
+    return response()->json([
+        'status' => 'success',
+        'dorms' => $dorms,
+    ]);
+}
+
+
+
+
+
+
+
+
     protected $locationSynonyms = [
         "lapulapu" => ["lapu-lapu", "lapu lapu", "lapulapu", "lapulapu city"],
         "airport" => ["airport", "opon", "mcac", "mactan"]
     ];
 
+
     protected function normalize($text)
     {
         return preg_replace('/[^a-z0-9]+/', '', strtolower($text));
     }
+
 
     protected function matchesSynonym($keywordNormalized, $addressNormalized)
     {
@@ -79,121 +243,156 @@ class dormitories extends Controller
         return false;
     }
 
-    public function searchLocations(Request $request)
-    {
-        try {
-            $validated = $request->validate([
-                'location' => 'required|string',
-            ]);
-            $keyword = strtolower(trim($validated['location']));
-            $keywordNormalized = $this->normalize($keyword);
 
-            $dorms = DB::table('dorms as d')
-                ->leftJoin('dormimages as i', 'i.fkdormID', '=', 'd.dormID')
-                ->select('d.*', 'i.mainImage')
-                ->whereNotNull('d.latitude')
-                ->whereNotNull('d.longitude')
-                ->get();
+   public function searchLocations(Request $request)
+{
+    try {
+        // Validate input
+        $validated = $request->validate([
+            'location' => 'required|string',
+        ]);
 
-            $recommendations = $dorms->filter(function ($dorm) use ($keywordNormalized) {
-                $addressNormalized = preg_replace('/[^a-z0-9]+/', '', strtolower($dorm->address));
 
-                return strpos($addressNormalized, $keywordNormalized) !== false ||
-                       $this->matchesSynonym($keywordNormalized, $addressNormalized);
+        $keyword = strtolower(trim($validated['location']));
+        $keywordNormalized = $this->normalize($keyword);
+
+
+        // Base query
+        $query = DB::table('dorms as d')
+            ->leftJoin('dormimages as i', 'i.fkdormID', '=', 'd.dormID')
+            ->select('d.*', 'i.mainImage')
+            ->whereNotNull('d.latitude')
+            ->whereNotNull('d.longitude');
+
+
+        // Paginate before filtering
+        $dormsPaginated = $query->paginate(10);
+
+
+        // Apply Collection filtering to handle normalization & synonyms
+        $filteredCollection = $dormsPaginated->getCollection()->filter(function ($dorm) use ($keywordNormalized) {
+            $addressNormalized = preg_replace('/[^a-z0-9]+/', '', strtolower($dorm->address));
+            return strpos($addressNormalized, $keywordNormalized) !== false ||
+                   $this->matchesSynonym($keywordNormalized, $addressNormalized);
+        });
+
+
+        // Replace the collection in the paginator so pagination metadata remains
+        $dormsPaginated->setCollection($filteredCollection->values());
+
+
+        return response()->json([
+            'status' => 'success',
+            'recommendations' => $dormsPaginated,
+        ]);
+
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Laravel controller error',
+            'details' => $e->getMessage()
+        ], 500);
+    }
+}
+   public function priceRecommendations(Request $request)
+{
+    try {
+        $minPrice = floatval($request->input('min_price', 0));
+        $maxPrice = floatval($request->input('max_price', 999999));
+
+
+        $adjustedMin = $minPrice * 0.8;
+        $adjustedMax = $maxPrice * 1.2;
+
+
+        // Use Eloquent with relationships
+        $results = \App\Models\landlord\roomModel::with(['dorm.images'])
+            ->whereBetween('price', [$adjustedMin, $adjustedMax])
+            ->whereRaw('LOWER(availability) = ?', ['available'])
+            ->orderBy('price', 'asc')
+            ->paginate(10)
+             ->through(function ($room) {
+                return [
+                    'dormID'        => $room->dorm->dormID ?? null,
+                    'dormavailability'  => $room->dorm->availability,
+                    'dormName'      => $room->dorm->dormName ?? null,
+                    'occupancyType' => $room->dorm->occupancyType ?? null,
+                    'address'       => $room->dorm->address ?? null,
+                    'latitude'      => $room->dorm->latitude ?? null,
+                    'longitude'     => $room->dorm->longitude ?? null,
+                    'price'         => $room->price,
+                    'genderPreference' => $room->genderPreference,
+                    'roomType'      => $room->roomType,
+                    'furnishing_status' => $room->furnishing_status,
+                    'availability'  => $room->availability,
+                    'mainImage'     => $room->dorm->images->mainImage ?? null,
+                ];
             });
 
-            return response()->json([
-                'status' => 'success',
-                'recommendations' => $recommendations->values()
-            ]);
 
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Laravel controller error',
-                'details' => $e->getMessage()
-            ], 500);
-        }
+        return response()->json([
+            'status' => 'success',
+            'data' => $results,
+        ]);
+
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage()
+        ], 500);
     }
-    public function priceRecommendations(Request $request)
-    {
-        try {
-            $minPrice = floatval($request->input('min_price', 0));
-            $maxPrice = floatval($request->input('max_price', 999999));
-    
-            $adjustedMin = $minPrice * 0.8;
-            $adjustedMax = $maxPrice * 1.2;
-    
-            $results = DB::table('rooms as r')
-                ->join('dorms as d', 'r.fkdormID', '=', 'd.dormID')
-                ->leftJoin('dormimages as i', 'i.fkdormID', '=', 'd.dormID')
-                ->select(
-                    'd.dormID',
-                    'd.dormName',
-                    'd.address',
-                    'd.latitude',
-                    'd.longitude',
-                    'r.price',
-                    'r.roomType',
-                    'r.furnishing_status',
-                    'r.availability',
-                    'i.mainImage'
-                )
-                ->whereBetween('r.price', [$adjustedMin, $adjustedMax])
-                ->whereRaw('LOWER(r.availability) = ?', ['available'])
-                ->orderBy('r.price', 'asc')
-                ->limit(10)
-                ->get();
-    
-            return response()->json([
-                'status' => 'success',
-                'data' => $results,
-            ]);
-    
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ], 500);
+}
+
+
+   public function genderRecommendations(Request $request)
+{
+    try {
+        $validated = $request->validate([
+            'occupancy_type' => 'required|string',
+        ]);
+
+
+        $inputType = strtolower(trim($validated['occupancy_type']));
+
+
+        $query = DB::table('dorms as d')
+            ->leftJoin('dormimages as i', 'i.fkdormID', '=', 'd.dormID')
+            ->select('d.*', 'i.mainImage');
+
+
+        // Filter sa query level para preserve pagination
+        if ($inputType != 'all') {
+            if ($inputType == 'male') {
+                $query->whereRaw("LOWER(occupancyType) = 'male only'");
+            } elseif ($inputType == 'female') {
+                $query->whereRaw("LOWER(occupancyType) = 'female only'");
+            } elseif ($inputType == 'mixed') {
+                $query->whereRaw("LOWER(occupancyType) LIKE '%mixed%'");
+            }
         }
+
+
+        $dorms = $query->paginate(10); // Pagination preserved
+
+
+        return response()->json([
+            'status' => 'success',
+            'recommendations' => $dorms, // items + pagination metadata
+        ]);
+
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Laravel error',
+            'details' => $e->getMessage(),
+        ], 500);
     }
-    public function genderRecommendations(Request $request)
-    {
-        try {
-            $validated = $request->validate([
-                'occupancy_type' => 'required|string',
-            ]);
+}
 
-            $inputType = strtolower(trim($validated['occupancy_type']));
 
-            $dorms = DB::table('dorms as d')
-                ->leftJoin('dormimages as i', 'i.fkdormID', '=', 'd.dormID')
-                ->select('d.*', 'i.mainImage')
-                ->get();
-
-            $recommendations = $dorms->filter(function ($dorm) use ($inputType) {
-                $type = strtolower(trim($dorm->occupancyType));
-                return (
-                    ($inputType == 'male' && $type == 'male only') ||
-                    ($inputType == 'female' && $type == 'female only') ||
-                    ($inputType == 'mixed' && strpos($type, 'mixed') !== false) ||
-                    ($inputType == 'all')
-                );
-            });
-
-            return response()->json([
-                'status' => 'success',
-                'recommendations' => $recommendations->values(),
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Laravel error',
-                'details' => $e->getMessage(),
-            ], 500);
-        }
-    }
     public function mostWatchedDorm($id)
     {
         $dorm = dormModel::with('images')->orderBy('views', 'desc')->get();
@@ -206,9 +405,11 @@ class dormitories extends Controller
 {
     $query = dormModel::query();
 
+
     if (!empty($filters['location'])) {
         $query->where('address', 'like', '%' . $filters['location'] . '%');
     }
+
 
     // You can join rooms table and filter by room type or price
     if (!empty($filters['type']) || !empty($filters['max_price'])) {
@@ -222,13 +423,16 @@ class dormitories extends Controller
         });
     }
 
+
     $dorms = $query->with('rooms')->get();
+
 
     return $dorms;
 }
 public function getQuestionRecommendations(Request $request)
 {
     $question = $request->input('question');
+
 
     try {
         // Call Flask/OpenAI API
@@ -238,12 +442,15 @@ public function getQuestionRecommendations(Request $request)
 // Use your Render app URL here
 // $flaskApiUrl = "https://pythonai-rkae.onrender.com/ask-ai/dormitories";
 
+
 // Send POST request to Flask API
 $apiUrl = env('AI_API_URL') . '/'.'dormitories';
+
 
 $response = Http::post($apiUrl, [
     'question' => $question,
 ]);
+
 
 // Optional: handle errors
 if ($response->failed()) {
@@ -254,19 +461,25 @@ if ($response->failed()) {
     ];
 }
 
+
 // Get JSON response
 $data = $response->json();
 
+
         \Log::info('Raw Flask response: ' . $response->body());
 
+
         $data = $response->json() ?? [];
+
 
         // Raw AI message
         $aiRaw = $data['message'] ?? 'Walay tubag nakuha gikan sa AI';
 
+
         // Extract AI message text (remove JSON block if any)
         $aiMessage = preg_replace('/```json.*```/s', '', $aiRaw);
         $aiMessage = trim($aiMessage);
+
 
         // Extract AI JSON recommendations if present
         preg_match('/```json(.*?)```/s', $aiRaw, $matches);
@@ -275,10 +488,12 @@ $data = $response->json();
             $aiRecommendations = json_decode(trim($matches[1]), true) ?? [];
         }
 
+
         // Fallback if Flask didn't return JSON
         if (empty($aiRecommendations)) {
             $aiRecommendations = $data['recommendations'] ?? [];
         }
+
 
         // Ensure each dorm has proper structure and rooms are included
         $recommendations = array_map(function ($dorm) {
@@ -291,6 +506,7 @@ $data = $response->json();
                     $amenities = $dorm['amenities'];
                 }
             }
+
 
             // Handle rooms safely
             $rooms = [];
@@ -309,6 +525,7 @@ $data = $response->json();
                     ];
                 }, $dorm['rooms']);
             }
+
 
             return [
                 'dormID' => $dorm['dormID'] ?? null,
@@ -329,6 +546,7 @@ $data = $response->json();
             ];
         }, $aiRecommendations);
 
+
         // Fallback entirely to DB result if recommendations still empty
         if (empty($recommendations) && isset($data['result']) && is_array($data['result'])) {
             $recommendations = array_map(function($room) {
@@ -336,6 +554,7 @@ $data = $response->json();
                 if (is_string($features)) {
                     $features = explode(',', $features);
                 }
+
 
                 return [
                     'dormID' => $room['dormID'] ?? null,
@@ -358,14 +577,17 @@ $data = $response->json();
             }, $data['result']);
         }
 
+
         return response()->json([
             'message' => $aiMessage,
             'dorms' => $data['result'] ?? [],
             'recommendations' => $recommendations,
         ]);
 
+
     } catch (\Exception $e) {
         \Log::error('AI Dorm Recommendation Error: ' . $e->getMessage());
+
 
         return response()->json([
             'message' => 'Naa’y error sa pagkuha og AI recommendations.',
@@ -374,5 +596,6 @@ $data = $response->json();
         ], 500);
     }
 }
+
 
 }

@@ -260,6 +260,12 @@ Route::middleware([TenantAuth::class])->group(function () {
     Route::post('/search-locations', [dormitories::class, 'searchLocations']);
     Route::post('/pricerecommendations', [dormitories::class, 'priceRecommendations']);
     Route::post('/gender-recommendations', [dormitories::class, 'genderRecommendations']);
+    Route::get('/select-cities',[dormitories::class,'selectedCityDorms']);
+    Route::get('/fetch-amenities',[dormitories::class,'fetchAmenities']);
+    Route::post('get/amenities',[dormitories::class,'getAmenities']);
+    Route::get('get/rate',[dormitories::class,'getRate']);
+    Route::get('get/sortByDate',[dormitories::class,'getSortByDate']);
+    Route::get('get/availability',[dormitories::class,'getAvailability']);
     Route::post('/ai/question/reccomendations', [dormitories::class, 'getQuestionRecommendations']);
     Route::get('/most/watched/dorm/{id}', [dormitories::class, 'mostWatchedDorm']);
 //review and rating page
