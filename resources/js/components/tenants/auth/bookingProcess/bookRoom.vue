@@ -279,6 +279,7 @@ export default {
         this.room_id = element.dataset.roomId;
         this.tenant_id = element.dataset.tenantId;
         this.getRoomDetails();
+        this.setMoveOutDate();
         this.subscribeToNotifications();
 
     }
