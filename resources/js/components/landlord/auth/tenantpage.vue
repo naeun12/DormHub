@@ -102,7 +102,7 @@
                                         <li class="list-group-item"><strong>Name:</strong> {{ moveInTenant.firstname }}
                                             {{ moveInTenant.lastname }}</li>
                                         <li class="list-group-item"><strong>Email:</strong> {{ moveInTenant.contactEmail
-                                            }}</li>
+                                        }}</li>
                                         <li class="list-group-item"><strong>Phone:</strong> {{
                                             moveInTenant.contactNumber }}</li>
                                     </ul>

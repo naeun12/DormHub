@@ -2,13 +2,9 @@
     <div class="main-content w-100">
 
 
-
-
         <div class="dashboard-content px-2 px-md-4 py-3">
             <NotificationList ref="toastRef" />
             <Loader ref="loader" />
-
-
 
 
             <!-- Header Card -->
@@ -19,8 +15,6 @@
                 </h3>
 
 
-
-
                 <!-- Date & Reports -->
                 <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center mb-3 gap-2">
                     <!-- Date -->
@@ -29,7 +23,6 @@
                         <input type="date" class="form-control w-25 w-md-auto"
                             style="border: 1px solid #4edce2; min-width: 50px;" v-model="newDate" :max="today">
                     </div>
-
 
                     <div class="ms-md-auto mt-2 mt-md-0">
                         <div class="dropdown">
@@ -46,7 +39,6 @@
                             </ul>
                         </div>
 
-
                     </div>
                     <!-- Download Report -->
                     <div class="ms-md-auto mt-2 mt-md-0">
@@ -57,8 +49,6 @@
                     </div>
                 </div>
             </div>
-
-
 
 
             <!-- Info Cards -->
@@ -79,8 +69,6 @@
                 </div>
 
 
-
-
                 <!-- Vacant Beds -->
                 <div class="col-12 col-md-6 mb-3">
                     <a :href="`/landlordRoomManagement/${landlord_id}`" class="text-decoration-none">
@@ -98,8 +86,6 @@
             </div>
 
 
-
-
             <!-- Charts -->
             <div class="charts d-flex flex-wrap gap-3 mb-4">
                 <!-- Highest Dorm Profits -->
@@ -109,14 +95,12 @@
                     <LineChart v-if="chartData" :chart-data="chartData" :chart-options="chartOptions" />
                 </div>
 
-
                 <!-- Profits Per Dorm -->
                 <div class="chart-container p-3 border rounded shadow-sm flex-grow-1"
                     style="flex: 1 1 45%; min-width: 250px;">
                     <h6 class="fw-bold mb-2"><i class="bi bi-person-lines-fill me-2"></i> Occupants by Gender</h6>
                     <DoughnutChart v-if="bookingChartData" :chart-data="bookingChartData"
                         :chart-options="bookingChartOptions" />
-
 
                     <!-- Legend -->
                     <div class="legend mt-3" v-if="bookingChartData?.labels?.length">
@@ -134,9 +118,6 @@
                     </div>
                 </div>
             </div>
-
-
-
 
 
 
@@ -174,8 +155,6 @@
                 </div>
 
 
-
-
                 <div class="col-12 col-md-6 mb-3">
                     <a :href="`/reservation-index/${landlord_id}`" class="text-decoration-none">
                         <div class="card shadow-sm border-start border-warning border-4 h-100">
@@ -206,8 +185,6 @@
             </div>
 
 
-
-
         </div>
     </div>
 </template>
@@ -222,9 +199,6 @@ import { get } from 'lodash';
 
 
 
-
-
-
 export default
     {
         components: {
@@ -232,7 +206,6 @@ export default
             DoughnutChart,
             Loader,
             NotificationList
-
 
         },
         data() {
@@ -275,7 +248,6 @@ export default
             }
         },
 
-
         mounted() {
             const element = document.getElementById('dashboard');
             this.landlord_id = element.dataset.landlordId;
@@ -285,14 +257,12 @@ export default
             this.newDate = this.today; // default value to today
             this.getLandlord();
 
-
         },
         methods:
         {
             subscribeToNotifications() {
                 if (this.hasSubscribed) return; // prevent multiple subscriptions
                 this.hasSubscribed = true;
-
 
                 this.receiverID = this.landlord_id;
                 Echo.private(`notifications.${this.receiverID}`)
@@ -312,9 +282,7 @@ export default
                 try {
                     this.$refs.loader.loading = true;
 
-
                     const response = await axios.get(`/get/landlord/${this.landlord_id}`);
-
 
                     this.landlord = response.data.landlord;
                     await Promise.all([
@@ -327,7 +295,6 @@ export default
                         this.getDormID()
                     ]);
 
-
                 }
                 catch (error) {
                     console.log(error);
@@ -335,9 +302,7 @@ export default
                 finally {
                     this.$refs.loader.loading = false;
 
-
                 }
-
 
             },
             selectDorm(dorm) {
@@ -358,7 +323,6 @@ export default
                         params.dorm_id = dorm_id;
                     }
 
-
                     const response = await axios.get(`/get/total-tenants/${this.landlord_id}`, { params });
                     this.totalTenants = response.data.total_tenants;
                 } catch (error) {
@@ -367,7 +331,6 @@ export default
                 }
             },
 
-
             async getAvailableBeds(dorm_id = null) {
                 try {
                     // Build params object
@@ -375,7 +338,6 @@ export default
                     if (dorm_id) {
                         params.dorm_id = dorm_id;
                     }
-
 
                     const response = await axios.get(`/get/available-beds/${this.landlord_id}`, { params });
                     this.availableBeds = response.data.available_beds;
@@ -412,16 +374,13 @@ export default
                 }
             },
 
-
             async getRoomProfits(dorm_id = null) {
                 try {
                     const params = { date: this.newDate };
                     if (dorm_id) params.dorm_id = dorm_id;
 
-
                     const response = await axios.get(`/get/room-profits/${this.landlord_id}`, { params });
                     const rooms = response.data.data;
-
 
                     this.chartData = {
                         labels: rooms.map(r => r.roomNumber), // ← roomNumber, dili roomName
@@ -436,7 +395,6 @@ export default
                         ]
                     };
 
-
                     this.totalRoomProfit = response.data.total_profit;
                 } catch (error) {
                     console.error('Error fetching room profits:', error);
@@ -446,7 +404,6 @@ export default
                 try {
                     this.$refs.loader.loading = true;
 
-
                     const response = await axios.get(`/get/gender-distribution/${this.landlord_id}`, {
                         params: {
                             date: this.newDate,
@@ -454,9 +411,7 @@ export default
                         }
                     });
 
-
                     const genders = Array.isArray(response.data?.data) ? response.data.data : [];
-
 
                     if (genders.length === 0) {
                         this.bookingChartData = {
@@ -473,13 +428,10 @@ export default
                         return;
                     }
 
-
                     const labels = genders.map(item => item.gender || "Unknown");
                     const data = genders.map(item => item.count || 0);
 
-
                     const backgroundColors = ["#2196f3", "#e91e63", "#ff9800", "#4caf50", "#9c27b0"];
-
 
                     this.bookingChartData = {
                         labels,
@@ -493,7 +445,6 @@ export default
                         ]
                     };
 
-
                 } catch (error) {
                     console.error("❌ Failed to fetch gender distribution:", error);
                     this.bookingChartData = { labels: [], datasets: [] };
@@ -501,7 +452,6 @@ export default
                     this.$refs.loader.loading = false;
                 }
             },
-
 
             calculatePercentage(value, dataArray) {
                 const total = dataArray.reduce((sum, val) => sum + val, 0);
@@ -522,8 +472,6 @@ export default
             }
 
 
-
-
         },
         watch: {
             newDate(newVal) {
@@ -537,7 +485,7 @@ export default
                 }
             }
         }
-    }
 
+    }
 
 </script>

@@ -871,7 +871,8 @@ public function softDelete(Request $request, $id)
             'error'   => $e->getMessage()
         ], 500);
 }
-}public function generateActiveTenantReport(Request $request)
+}
+public function generateActiveTenantReport(Request $request)
 {
     $landlordId = session('landlord_id');
     if (!$landlordId) {
@@ -881,10 +882,8 @@ public function softDelete(Request $request, $id)
         ], 403);
     }
 
-
     $logoPath = public_path('images/Logo/logo.png');
     $date = $request->query('date'); // optional date filter YYYY-MM-DD
-
 
    $tenants = approvetenantsModel::with('room.dorm')
     ->whereHas('room', function ($query) use ($landlordId) {
@@ -900,10 +899,7 @@ public function softDelete(Request $request, $id)
     ->get();
 
 
-
-
     $totalTenants = $tenants->count();
-
 
     $pdf = Pdf::loadView('landlord.reports.active-tenant-report', [
         'tenants' => $tenants,
@@ -911,7 +907,6 @@ public function softDelete(Request $request, $id)
         'totalTenants' => $totalTenants,
         'selectedDate' => $date
     ]);
-
 
     return $pdf->stream("landlord.reports.active-tenant-report-{$landlordId}.pdf");
 }
@@ -925,12 +920,9 @@ public function generateExtensionPaymentReport(Request $request)
         ], 403);
     }
 
-
     $logoPath = public_path('images/Logo/logo.png');
 
-
     $date = $request->query('date'); // optional date
-
 
     $tenantsWithExtensions = approvetenantsModel::with(['room.dorm', 'payments'])
         ->whereHas('room', fn($q) => $q->where('fklandlordID', $landlordId))
@@ -939,17 +931,15 @@ public function generateExtensionPaymentReport(Request $request)
         ->when($date, function ($query) use ($date) {
             // Filter by month and year
             $query->whereHas('payments', fn($q) => $q->whereYear('created_at', date('Y', strtotime($date)))
-            ->whereMonth('created_at', date('m', strtotime($date))));
+                                                        ->whereMonth('created_at', date('m', strtotime($date))));
         })
         ->orderBy('created_at', 'desc')
         ->get();
-
 
     // Calculate total extension payments
     $totalIncome = $tenantsWithExtensions->sum(function($tenant) {
         return $tenant->payments->sum('amount');
     });
-
 
     $pdf = Pdf::loadView('landlord.reports.extension-payment-report', [
         'tenants' => $tenantsWithExtensions,
@@ -957,7 +947,8 @@ public function generateExtensionPaymentReport(Request $request)
         'totalIncome' => $totalIncome
     ]);
 
-
     return $pdf->stream("landlord-extension-payment-report-{$landlordId}.pdf");
 }
+
+
 }
