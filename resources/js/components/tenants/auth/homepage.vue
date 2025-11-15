@@ -13,7 +13,7 @@
             <li class="nav-item">
                 <a href="#" @click="viewPayment" class="nav-link nav-feature-link d-flex align-items-center gap-2">
                     <i class="bi bi-cash-coin fs-5"></i>
-                    <span>Next Payment</span>
+                    <span>Payment History</span>
                 </a>
             </li>
             <li class="nav-item">
