@@ -85,7 +85,7 @@ class tenantmessageController extends Controller
         $topic = "tenant_{$tenant_id}_landlord_{$landlord_id}";
     
         $conversation = conversationModel::where('topic', $topic)->first();
-    
+        conversationModel::where('topic', $topic)->update(['updated_at' => now()]);
         if (!$conversation) {
             $conversation = conversationModel::create([
                 'topic' => $topic,
@@ -113,7 +113,7 @@ class tenantmessageController extends Controller
     
     public function getLandlordConversation($tenant_id)
     {
-        $conversations = conversationModel::where('topic', 'like', '%tenant_' . $tenant_id . '%')->get();
+        $conversations = conversationModel::where('topic', 'like', '%tenant_' . $tenant_id . '%')->orderBy('updated_at', 'desc')->get();
         $history = $conversations->map(function ($convo) use ($tenant_id) {
         preg_match('/landlord_([a-z0-9\-]+)/', $convo->topic, $matches);
         $landlord_id = $matches[1] ?? null;
@@ -188,6 +188,7 @@ class tenantmessageController extends Controller
     $message->sentAt = now();
     $message->isRead = 0;
     $message->save();
+    conversationModel::where('id', $conversation->id)->update(['updated_at' => now()]);
     broadcast(new MessageSent($message))->toOthers();
         $notifications = notificationModel::create([
         'senderID'     => $message->senderID,

@@ -250,6 +250,28 @@ $response = Http::post($apiUrl, [
             'roomDetail' => $roomDetail
         ]);
     }
+    public function filluptenant(Request $request)
+{
+    $tenant_id = $request->input('tenant_id');
+
+
+    $tenant = tenantModel::find($tenant_id);
+
+
+    if (!$tenant) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Tenant not found',
+        ], 404);
+    }
+
+
+    return response()->json([
+        'status' => 'success',
+        'tenant' => $tenant,
+    ]);
+}
+
 
 
 }

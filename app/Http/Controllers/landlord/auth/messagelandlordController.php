@@ -84,6 +84,8 @@ public function selecttenantToMessage(Request $request, $landlord_id)
         ['topic' => $topic],
         ['initiatorID' => $landlord_id, 'initiatorRole' => 'landlord']
     );
+            conversationModel::where('topic', $topic)->update(['updated_at' => now()]);
+
 
     $lastMessage = messageModel::where('conversationID', $conversation->id)
         ->latest('sentAt')
@@ -113,7 +115,7 @@ public function selecttenantToMessage(Request $request, $landlord_id)
 
 public function getConversations($landlord_id)
 {
-    $conversations = conversationModel::where('topic', 'like', '%landlord_' . $landlord_id . '%')->get();
+    $conversations = conversationModel::where('topic', 'like', '%landlord_' . $landlord_id . '%')->orderBy('updated_at', 'desc')->get();
 
     $history = $conversations->map(function ($convo) use ($landlord_id) {
         preg_match('/tenant_([a-z0-9\-]+)/', $convo->topic, $matches);
@@ -177,6 +179,7 @@ public function sendMessage(Request $request)
             'message' => 'Unable to resolve receiver ID from topic.'
         ], 422);
     }
+     conversationModel::where('id', $conversation->id)->update(['updated_at' => now()]);
     $message = new \App\Models\messageModel();
     $message->conversationID = $validated['conversationID'];
     $message->message = $validated['message'];
@@ -192,7 +195,7 @@ public function sendMessage(Request $request)
             'senderID'     => $message->senderID,
             'senderType'   => 'tenant',
             'receiverID'   => $message->receiverID,
-            'receiverType' => 'Tenant',
+            'receiverType' => 'tenant',
             'title'        => 'Landlord Send a message',
             'message'      => "A landlord has sent you a message",
             'isRead'       => false,

@@ -240,14 +240,18 @@ Route::middleware([TenantAuth::class])->group(function () {
     Route::get('/tenant/dorms/lapu-lapu', [homepageController::class, 'dormLapuLapu']);
     Route::get('/tenant/dorms/mandaue', [homepageController::class, 'dormMandaeu']);  
     Route::get('/api/top-rated-dorms', [homepageController::class, 'topRatedDorms']);  
-
+   Route::get('gender-preference-dorms/{tenant_id}',[homepageController::class,'genderPreference']);
+    Route::get('get/preferred-tenants',[homepageController::class,'getTenantPersonalized']);
+    Route::post('update/submit-personalized',[homepageController::class,'updateSubmitPersonalized']);
+    Route::get('get/room-and-dorm-personalized',[homepageController::class,'getRoomandDormPersonalized']);
     Route::post('/tenant-information', [dormdetailscontroller::class, 'tenantInformation'])->name('tenant.information');
     Route::post('/tenant-idPicture', [dormdetailscontroller::class, 'uploadTenantId'])->name('tenant.idPicture');
     Route::get('/dorms/{id}/review-stats', [dormdetailscontroller::class, 'reviewStats']);
     Route::get('/dorm-details', [dormdetailscontroller::class, 'ViewDorms'])->name('dorm.details');
     Route::get('/get/dorm/askai/{id}', [dormdetailscontroller::class, 'getdormAskAI']);
     Route::post('/send/ai', [dormdetailscontroller::class, 'askAI']);
-            Route::get('/roomDetail/{room_id}',[dormdetailscontroller::class,'roomDetails']);
+    Route::get('/roomDetail/{room_id}',[dormdetailscontroller::class,'roomDetails']);
+     Route::get('fillup/tenant',[dormdetailscontroller::class,'fillupTenant']);
 
 
     

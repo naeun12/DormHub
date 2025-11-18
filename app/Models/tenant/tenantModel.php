@@ -38,6 +38,12 @@ class tenantModel extends Authenticatable
         'postalCode',
         'currentAddress',
         'profilePicUrl',
+        'isPersonalized',
+        'preferred_room_price',
+        'preferred_location',
+        'preferred_amenities',
+        'preferred_rules',
+        'preferred_features',
         'is_deactivated',
     ];
     public function getAuthPassword()
