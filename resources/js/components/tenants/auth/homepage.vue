@@ -897,7 +897,7 @@ export default {
 
 /* Sequential animation using delay */
 .animated-text:nth-child(1) {
-    animation-delay: 0.2s;
+    animation-delay: 0.1s;
 }
 
 .animated-text:nth-child(2) {
