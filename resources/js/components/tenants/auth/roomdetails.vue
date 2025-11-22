@@ -1,5 +1,4 @@
 <template>
-    <h1 class="text-white">2</h1>
     <div v-if="this.is_deactivated === 0">
 
         <Loader ref="loader" />
@@ -455,7 +454,7 @@ export default {
             lastname: '',
             contactInfo: '',
             VisibleImagePostModal: false,
-            age: null,
+            age: 20,
             sex: '',
             email: '',
             student_picture: "",
@@ -496,6 +495,7 @@ export default {
                 this.dormLocation();
                 this.subscribeToNotifications();
                 this.fetchStats();
+                this.fillupTenant();
 
             } else {
                 console.error("RoomDetails element not found!");
