@@ -1,4 +1,5 @@
 <template>
+    <h1 class="text-white">2</h1>
     <div v-if="this.is_deactivated === 0">
 
         <Loader ref="loader" />
