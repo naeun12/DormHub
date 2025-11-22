@@ -845,6 +845,21 @@ export default {
                 this.$refs.loader.loading = false;
 
             }
+        },
+        async fillupTenant() {
+            try {
+
+                const res = await axios.get('/fillup/tenant', { params: { tenant_id: this.tenant_id } });
+                this.filluptenant = res.data.tenant;
+                this.firstname = this.filluptenant.firstname;
+                this.lastname = this.filluptenant.lastname;
+                this.contactInfo = this.filluptenant.phoneNumber;
+                this.email = this.filluptenant.email;
+                this.age = 20;
+                this.sex = this.filluptenant.gender;
+            } catch (error) {
+                console.error("Error fetching tenant fill-up data:", error);
+            }
         }
 
 
