@@ -1,19 +1,136 @@
 <template>
+
     <NotificationList ref="toastRef" />
+    <!-- Floating Button -->
+
+    <div class="offcanvas offcanvas-start rounded-4" data-bs-backdrop="static" tabindex="-1" id="staticBackdrop"
+        aria-labelledby="staticBackdropLabel">
+        <div class="offcanvas-header bg-info text-white shadow-sm">
+            <h5 class="offcanvas-title fw-bold" id="staticBackdropLabel">
+                <i class="bi bi-house-fill me-2"></i>Recommended Dorms
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
+                aria-label="Close"></button>
+        </div>
+
+        <div class="offcanvas-body p-3 bg-light">
+            <!-- Loader -->
+            <div v-if="loading" class="d-flex justify-content-center align-items-center" style="height: 200px;">
+                <div class="spinner-border text-info" role="status" style="width: 3rem; height: 3rem;">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+
+            <!-- Dorm Cards -->
+            <div v-else class="d-flex flex-column gap-3 overflow-auto" style="max-height: 200vh;">
+
+                <div v-for="(dorm, index) in genderPersonalized" :key="index"
+                    class="card dorm-card shadow-sm border-0 rounded-4 overflow-hidden hover-shadow transition-fast">
+
+                    <!-- Dorm Image & Price -->
+                    <div class="position-relative">
+                        <img :src="dorm?.images?.mainImage || dorm?.mainImage || 'https://via.placeholder.com/320x200'"
+                            class="card-img-top" style="height: 180px; object-fit: cover;">
+
+                        <span
+                            class="position-absolute top-0 start-0 m-2 px-3 py-1 bg-primary text-white rounded shadow-sm">
+                            ₱ {{dorm?.rooms?.length ? Math.min(...dorm.rooms.map(r => r.price)) : 'N/A'}}
+                        </span>
+                    </div>
+
+                    <div class="card-body d-flex flex-column gap-2">
+                        <!-- Dorm Name & Address -->
+                        <h6 class="fw-bold text-primary text-truncate">{{ dorm.dormName }}</h6>
+                        <p class="text-muted small mb-1 text-truncate">
+                            <i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ dorm.address || 'No address available.' }}
+                        </p>
+
+                        <!-- Occupancy Type -->
+                        <span class="badge rounded-pill px-2 py-1 mb-2" :class="{
+                            'bg-primary': dorm.occupancyType.includes('Male'),
+                            'bg-pink': dorm.occupancyType.includes('Female'),
+                            'bg-warning text-dark': dorm.occupancyType.includes('Mixed')
+                        }">
+                            <i class="bi bi-people-fill me-1"></i>{{ dorm.occupancyType || 'Unspecified' }}
+                        </span>
+
+                        <!-- Amenities -->
+                        <!-- Amenities -->
+                        <div class="mb-1">
+                            <small class="fw-semibold">Amenities:</small>
+                            <div class="d-flex flex-wrap gap-1 mt-1">
+                                <template v-if="dorm.amenities && dorm.amenities.length > 0">
+                                    <span v-for="amenity in dorm.amenities" :key="amenity.id"
+                                        class="badge rounded-pill px-2 py-1 text-truncate"
+                                        :class="tenant.preferred_amenities.includes(amenity.id) ? 'bg-success text-white' : 'bg-secondary text-white'">
+                                        {{ amenity.aminityName }}
+                                    </span>
+                                </template>
+                                <span v-else class="text-muted">N/A</span>
+                            </div>
+                        </div>
+
+                        <!-- Room Features -->
+                        <div class="mb-1">
+                            <small class="fw-semibold">Features:</small>
+                            <div class="d-flex flex-wrap gap-1 mt-1">
+                                <template
+                                    v-if="dorm.rooms && dorm.rooms.some(r => r.features && r.features.length > 0)">
+                                    <template v-for="room in dorm.rooms" :key="room.roomID">
+                                        <span v-for="feature in room.features" :key="feature.id"
+                                            class="badge rounded-pill px-2 py-1 text-truncate" :class="tenant.preferred_features && tenant.preferred_features.includes(feature.id)
+                                                ? 'bg-success text-white'
+                                                : 'bg-secondary text-white'">
+                                            {{ feature.featureName }}
+                                        </span>
+                                    </template>
+                                </template>
+                                <span v-else class="text-muted">N/A</span>
+                            </div>
+                        </div>
+
+                        <!-- Rules & Policies -->
+                        <div class="mb-2">
+                            <small class="fw-semibold">Rules:</small>
+                            <div class="d-flex flex-wrap gap-1 mt-1">
+                                <template v-if="dorm.rules_and_policy && dorm.rules_and_policy.length > 0">
+                                    <span v-for="rule in dorm.rules_and_policy" :key="rule.id"
+                                        class="badge rounded-pill px-2 py-1 bg-success text-white">
+                                        {{ rule.rulesName }}
+                                    </span>
+                                </template>
+                                <span v-else class="text-muted">N/A</span>
+                            </div>
+                        </div>
+
+
+                        <!-- View Button -->
+                        <button class="btn btn-info rounded-pill mt-auto" @click="viewDorms(dorm.dormID)">
+                            <i class="bi bi-box-arrow-up-right me-1"></i>View Details
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
 
     <!-- PERSONALIZE MODAL -->
     <div v-if="afterpersonalized"
         class="welcome-section position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
         style="background-color: rgba(0,0,0,0.7); z-index: 1050; padding: 1rem;">
 
-        <!-- Loading Spinner -->
 
 
         <!-- Welcome message -->
         <div v-if="showafterWelcome" class="text-center text-white p-4 rounded-4 welcome-card">
             <div class="d-flex gap-3 justify-content-center mb-3 animated-header">
-                <h1 class="display-4 fw-bold text-white">Welcome to</h1>
-                <h1 class="display-4 fw-bold text-info">DormHub!</h1>
+                <h1 class="display-5 fw-bold text-white mb-2" style="text-shadow: 1px 1px 4px rgba(0,0,0,0.5);">
+                    Successfully Updated Your Preferences
+                </h1>
+                <h2 class="h3 fw-semibold text-info" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.3);">
+                    Choose your dorm based on your preferences!
+                </h2>
             </div>
 
             <p class="lead mb-2 animated-text">
@@ -29,30 +146,31 @@
 
     </div>
 
-    <div v-if="showWelcome"
-        class="welcome-section position-fixed top-0 start-0 w-100 h-100 d-flex flex-column justify-content-center align-items-center"
-        style="background-color: rgba(0,0,0,0.5); z-index: 1050;">
-
-        <!-- Loading Spinner -->
-
-        <!-- Welcome message -->
-        <div v-if="showWelcome" class="text-center text-white">
-            <div class="d-flex gap-3">
-                <h1 class="display-4 fw-bold mb-3 text-white">Welcome to </h1>
-                <h1 class="display-4 fw-bold mb-3 text-info">DormHub!</h1>
-
-            </div>
-            <p class="lead mb-2">Find your perfect dormitory and book your room hassle-free.</p>
-
-            <!-- Sequential text labels -->
-            <div class="sequential-text mt-4">
-                <span v-if="showText[0]" class="fs-4 fw-bold me-3">Find Your Dorm</span>
-                <span v-if="showText[1]" class="fs-4 fw-bold">Book Now</span>
-            </div>
-        </div>
-    </div>
 
     <div v-if="!isPersonalized">
+        <div v-if="showWelcome"
+            class="welcome-section position-fixed top-0 start-0 w-100 h-100 d-flex flex-column justify-content-center align-items-center"
+            style="background-color: rgba(0,0,0,0.5); z-index: 1050;">
+
+            <!-- Loading Spinner -->
+
+            <!-- Welcome message -->
+            <div v-if="showWelcome" class="text-center text-white">
+                <div class="d-flex gap-3">
+                    <h1 class="display-4 fw-bold mb-3 text-white">Welcome to </h1>
+                    <h1 class="display-4 fw-bold mb-3 text-info">DormHub!</h1>
+
+                </div>
+                <p class="lead mb-2">Find your perfect dormitory and book your room hassle-free.</p>
+
+                <!-- Sequential text labels -->
+                <div class="sequential-text mt-4">
+                    <span v-if="showText[0]" class="fs-4 fw-bold me-3">Find Your Dorm</span>
+                    <span v-if="showText[1]" class="fs-4 fw-bold">Book Now</span>
+                </div>
+            </div>
+        </div>
+
         <div v-if="showModal" class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.6);">
             <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content rounded-4 shadow-lg border-0">
@@ -175,6 +293,7 @@
     <!-- Top Navigation -->
     <div class="bg-white m-3 py-3 px-2 text-center shadow-sm border-custom rounded-4">
         <ul class="nav justify-content-center gap-3 flex-wrap">
+
             <li class="nav-item">
                 <a href="#" @click="viewBooking" class="nav-link nav-feature-link d-flex align-items-center gap-2">
                     <i class="bi bi-calendar-check fs-5"></i>
@@ -210,113 +329,10 @@
         </ul>
 
     </div>
-
-
-
     <!-- Content Section -->
     <div class="container-fluid m-2 py-5">
-        <div class="personalization-section p-3 bg-light rounded-4 shadow-sm mb-4 mx-3">
-
-            <!-- Gender Preference -->
-
-            <div class="mb-4">
-                <div style="overflow-x: auto; white-space: nowrap; padding-bottom: 1rem;"
-                    class="shadow-sm rounded-4 bg-light p-3">
-
-                    <div class="d-flex flex-row gap-3" style="width: max-content;">
-                        <div class="card dorm-card shadow-sm border-0 rounded-4 overflow-hidden"
-                            v-for="(dorm, index) in genderPersonalized" :key="index"
-                            style="width: 20rem; flex-shrink: 0; transition: transform 0.2s ease, box-shadow 0.2s ease;">
-
-                            <!-- Dorm Image -->
-                            <div class="position-relative">
-                                <!-- Dorm Image -->
-                                <img :src="dorm?.images?.mainImage || dorm?.mainImage || 'https://via.placeholder.com/320x200'"
-                                    class="card-img-top" :alt="dorm.dormName"
-                                    style="height: 200px; object-fit: cover;" />
-
-                                <!-- Price Label -->
-                                <span
-                                    class="position-absolute top-0 start-0 m-2 px-2 py-1 bg-primary text-white rounded"
-                                    style="font-size: 0.9rem;">
-                                    ₱ {{dorm?.rooms?.length ? Math.min(...dorm.rooms.map(r => r.price)) : 'N/A'}}
-
-                                </span>
-                            </div>
 
 
-                            <div class="card-body d-flex flex-column" style="height: auto;">
-                                <!-- Dorm Name -->
-                                <h5 class="card-title text-primary fw-bold text-truncate">{{ dorm.dormName }}</h5>
-
-                                <!-- Address -->
-                                <p class="card-text text-muted small mb-2 text-truncate">
-                                    <i class="bi bi-geo-alt-fill text-danger me-1"></i>
-                                    {{ dorm.address || 'No description available.' }}
-                                </p>
-
-                                <!-- Occupancy Type -->
-                                <p class="mb-2">
-                                    <span class="badge text-white rounded-pill px-2 py-1" :class="{
-                                        'bg-primary': dorm.occupancyType.includes('Male'),
-                                        'bg-pink': dorm.occupancyType.includes('Female'),
-                                        'bg-warning text-dark': dorm.occupancyType.includes('Mixed')
-                                    }">
-                                        <i class="bi bi-people-fill me-1"></i>{{ dorm.occupancyType || 'Unspecified' }}
-                                    </span>
-                                </p>
-
-                                <!-- Amenities -->
-                                <div class="mb-2">
-                                    <div class="d-flex flex-wrap gap-1">
-                                        <span v-for="amenity in dorm.amenities" :key="amenity.id"
-                                            class="badge rounded-pill px-2 py-1"
-                                            :class="tenant.preferred_amenities.includes(amenity.id) ? 'bg-success text-white' : 'bg-secondary text-white'">
-                                            {{ amenity.aminityName }}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <!-- Room Features -->
-                                <div class="mb-2">
-                                    <div class="d-flex flex-wrap gap-1">
-                                        <template v-for="room in dorm.rooms" :key="room.roomID">
-                                            <span v-for="feature in room.features" :key="feature.id"
-                                                class="badge rounded-pill px-2 py-1" :class="tenant.preferred_features && tenant.preferred_features.includes(feature.id)
-                                                    ? 'bg-success text-white'
-                                                    : 'bg-secondary text-white'">
-                                                {{ feature.featureName }}
-                                            </span>
-                                        </template>
-                                    </div>
-
-                                </div>
-
-                                <!-- Rules & Policies -->
-                                <div class="mb-2">
-                                    <div class="d-flex flex-wrap gap-1">
-                                        <span v-for="rule in dorm.rules_and_policy" :key="rule.id"
-                                            class="badge rounded-pill px-2 py-1" :class="tenant.preferred_rules && tenant.preferred_rules.includes(rule.id)
-                                                ? 'bg-success text-white'
-                                                : 'bg-success text-white'">
-                                            {{ rule.rulesName }}
-                                        </span>
-                                    </div>
-
-                                </div>
-
-                                <!-- View Details Button -->
-                                <div class="mt-auto">
-                                    <button class="btn btn-info rounded-pill w-100" @click="viewDorms(dorm.dormID)">
-                                        <i class="bi bi-box-arrow-up-right me-1"></i>View Details
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <div class="row g-4">
             <!-- Mandaue Map -->
@@ -422,6 +438,15 @@
         </div>
     </div>
     <!-- Fixed Bottom-Right Button -->
+    <!-- Floating Button -->
+    <button type="button" class="btn btn-gradient btn-lg rounded-pill shadow-lg d-flex align-items-center gap-2"
+        style="position: fixed; bottom:90px; right: 30px; z-index: 1100; background: linear-gradient(135deg, #0dcaf0, #198754); color: #fff; font-weight: 600;"
+        data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">
+        <i class="bi bi-house-fill fs-5"></i>
+        Recommended Dorms
+    </button>
+
+
     <div v-if="isPersonalized === true">
         <button @click="openPreferences"
             class="btn btn-success btn-lg rounded-pill shadow-lg d-flex align-items-center justify-content-center gap-2 position-fixed"
@@ -462,15 +487,16 @@ export default {
             showModal: false,
             showWelcome: true,
             showafterWelcome: false,
-            showText: [false, false],
+            showText: [false, false], 
             isPersonalized: true,
             afterpersonalized: false,
             aminitiesList: {},
             featuresList: {},
             amenitiesList: {},
-            preferredAmenities: [],
+            preferredAmenities: [], 
             preferredRules: [],
             preferredFeature: [],
+            loading: false,
 
         };
     },
@@ -495,7 +521,7 @@ export default {
         },
 
         viewDorms(dormID) {
-            this.tenant_id = window.tenant_id;
+            this.tenant_id = window.tenant_id;            
             window.location.href = `/room-details/${dormID}/${this.tenant_id}`;
         },
         viewBooking() {
@@ -691,13 +717,13 @@ export default {
                 console.error(error);
             }
         },
-        async getTenant() {
+        async getTenant() { 
             try {
                 const response = await axios.get('/get/preferred-tenants');
                 this.isPersonalized = response.data.tenant.isPersonalized;
                 this.preferredLocation = response.data.tenant.preferred_location;
                 this.preferredPrice = response.data.tenant.preferred_room_price;
-
+               
             }
             catch (error) {
 
@@ -732,8 +758,8 @@ export default {
             }
         },
 
-        async welcomeLoader() {
-            await this.getTenant();
+       async welcomeLoader() { 
+           await this.getTenant();
             this.showWelcome = true;
             // Simulate delay
             setTimeout(() => {
@@ -741,8 +767,8 @@ export default {
                 this.showModal = true;
             }, 3000); // 3 seconds
         },
-
-
+      
+    
 
         startSequence() {
             // Show "Find Your Dorm" after 1 second
@@ -763,14 +789,19 @@ export default {
         },
         async getPreferences() {
             try {
+                this.loading = true;
                 const response = await axios.get('/get/room-and-dorm-personalized');
-
                 // Direct assignment (no map)
                 this.rulesList = response.data.rulesarray || [];
                 this.featuresList = response.data.featureArray || [];
                 this.aminitiesList = response.data.amenitiesArray || [];
+                this.loading = false;
+
             } catch (error) {
                 console.error('Error fetching preferences:', error);
+            }
+            finally {
+                this.loading = false;
             }
         },
         toggleAmenity(id) {
@@ -897,7 +928,7 @@ export default {
 
 /* Sequential animation using delay */
 .animated-text:nth-child(1) {
-    animation-delay: 0.1s;
+    animation-delay: 0.2s;
 }
 
 .animated-text:nth-child(2) {
@@ -906,5 +937,15 @@ export default {
 
 .animated-text:nth-child(3) {
     animation-delay: 0.8s;
+}
+.hover-shadow:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25) !important;
+    transform: translateY(-2px);
+    transition: all 0.2s ease;
+}
+
+.card-body .badge {
+    font-size: 0.75rem;
+    max-width: 100%;
 }
 </style>
