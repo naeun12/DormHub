@@ -22,7 +22,7 @@
             </div>
 
             <!-- Dorm Cards -->
-            <div v-else class="d-flex flex-column gap-3 overflow-auto" style="max-height: 200vh;">
+            <div v-else class="d-flex flex-column gap-3 overflow-auto" style="max-height: 300vh;">
 
                 <div v-for="(dorm, index) in genderPersonalized" :key="index"
                     class="card dorm-card shadow-sm border-0 rounded-4 overflow-hidden hover-shadow transition-fast">
@@ -30,19 +30,24 @@
                     <!-- Dorm Image & Price -->
                     <div class="position-relative">
                         <img :src="dorm?.images?.mainImage || dorm?.mainImage || 'https://via.placeholder.com/320x200'"
-                            class="card-img-top" style="height: 180px; object-fit: cover;">
+                            class="card-img-top" style="height: 250px; object-fit: cover;">
 
                         <span
                             class="position-absolute top-0 start-0 m-2 px-3 py-1 bg-primary text-white rounded shadow-sm">
-                            ₱ {{dorm?.rooms?.length ? Math.min(...dorm.rooms.map(r => r.price)) : 'N/A'}}
+                            ₱ {{
+                                dorm?.rooms?.length
+                                    ? Math.min(...dorm.rooms.map(r => r.price)).toFixed(2)
+                            : 'N/A'
+                            }}
                         </span>
+
                     </div>
 
                     <div class="card-body d-flex flex-column gap-2">
                         <!-- Dorm Name & Address -->
                         <h6 class="fw-bold text-primary text-truncate">{{ dorm.dormName }}</h6>
                         <p class="text-muted small mb-1 text-truncate">
-                            <i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ dorm.address || 'No address available.' }}
+                            <i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ dorm.address || 'No address  available.' }}
                         </p>
 
                         <!-- Occupancy Type -->
@@ -194,7 +199,7 @@
                                 <div
                                     class="input-group shadow-sm rounded-pill overflow-hidden border border-1 border-light">
                                     <span class="input-group-text bg-white border-0">
-                                        <i class="bi bi-cash-stack text-success"></i>
+                                         ₱ 
                                     </span>
                                     <input type="number" id="price" v-model.number="preferredPrice"
                                         class="form-control border-0" placeholder="Enter your budget" required
